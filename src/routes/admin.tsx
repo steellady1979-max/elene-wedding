@@ -3,15 +3,16 @@ import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useState } from "react";
 import { Lock, LogOut, RefreshCw } from "lucide-react";
 import { getRsvps, lockAdmin, unlockAdmin, type RsvpRow } from "@/lib/admin.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "ადმინი — თეკლა & ზაური RSVP" },
-      { name: "description", content: "დახურული გვერდი ქორწილის დასტურების სანახავად." },
+      { title: "ადმინი — თეკლა & ზაური RSVP & სურვილები" },
+      { name: "description", content: "დახურული გვერდი ქორწილის მონაცემების სანახავად." },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "ადმინი — RSVP" },
-      { property: "og:description", content: "დახურული გვერდი ქორწილის დასტურების სანახავად." },
+      { property: "og:title", content: "ადმინი — RSVP & სურვილები" },
+      { property: "og:description", content: "დახურული გვერდი ქორწილის მონაცემების სანახავად." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -19,12 +20,20 @@ export const Route = createFileRoute("/admin")({
   component: Admin,
 });
 
+type WishRow = {
+  id: string;
+  full_name: string;
+  message: string;
+  created_at: string;
+};
+
 function Admin() {
   const load = useServerFn(getRsvps);
   const unlock = useServerFn(unlockAdmin);
   const lock = useServerFn(lockAdmin);
 
   const [rows, setRows] = useState<RsvpRow[] | null>(null);
+  const [wishes, setWishes] = useState<WishRow[]>([]);
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -34,6 +43,17 @@ function Admin() {
     try {
       const res = await load({ data: undefined });
       setRows(res.locked ? null : res.rows);
+
+      if (!res.locked) {
+        const { data: wishesData } = await supabase
+          .from("wishes")
+          .select("id, full_name, message, created_at")
+          .order("created_at", { ascending: false });
+        
+        if (wishesData) {
+          setWishes(wishesData);
+        }
+      }
     } finally {
       setBusy(false);
     }
@@ -101,7 +121,7 @@ function Admin() {
     <main className="min-h-screen bg-backdrop px-4 py-12 sm:px-6">
       <div className="mx-auto max-w-4xl">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="font-geo text-2xl tracking-[0.12em] text-ink">დასტურები</h1>
+          <h1 className="font-geo text-2xl tracking-[0.12em] text-ink">პანელი & სურვილები</h1>
           <div className="flex gap-2">
             <button
               onClick={() => void refresh()}
@@ -128,11 +148,14 @@ function Admin() {
           <Stat label="სულ სტუმარი" value={totalGuests} />
           <Stat label="მოდის" value={yes.length} />
           <Stat label="+1" value={plusOnes.length} />
-          <Stat label="ვერ მოდის" value={no.length} />
+          <Stat label="სურვილები" value={wishes.length} />
         </div>
 
         <Table title="მოდის" rows={yes} />
         <Table title="ვერ მოდის" rows={no} />
+        
+        {/* სურვილების ცხრილი ადმინ-პანელისთვის */}
+        <WishesTable title="სტუმრების სურვილები" wishes={wishes} />
       </div>
     </main>
   );
@@ -172,6 +195,42 @@ function Table({ title, rows }: { title: string; rows: RsvpRow[] }) {
                   <td className="px-5 py-3 text-ink/70">{r.plus_one_name || "—"}</td>
                   <td className="px-5 py-3 text-ink/50">
                     {new Date(r.created_at).toLocaleDateString("ka-GE")}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function WishesTable({ title, wishes }: { title: string; wishes: WishRow[] }) {
+  return (
+    <section className="mt-8 overflow-hidden rounded-2xl border border-ink/10 bg-parchment/95 shadow-soft">
+      <h2 className="border-b border-ink/10 px-5 py-4 font-geo text-sm tracking-[0.2em] text-ink/70">
+        {title} ({wishes.length})
+      </h2>
+      {wishes.length === 0 ? (
+        <p className="px-5 py-6 font-geo text-sm text-ink/50">ჯერ სურვილები არ არის</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left font-geo text-sm text-ink/85">
+            <thead>
+              <tr className="border-b border-ink/10 text-[0.65rem] tracking-[0.2em] text-ink/50">
+                <th className="px-5 py-3">ავტორი</th>
+                <th className="px-5 py-3">სურვილი / მილოცვა</th>
+                <th className="px-5 py-3">თარიღი</th>
+              </tr>
+            </thead>
+            <tbody>
+              {wishes.map((w) => (
+                <tr key={w.id} className="border-b border-ink/5 last:border-0">
+                  <td className="px-5 py-3 font-semibold text-wine">{w.full_name}</td>
+                  <td className="px-5 py-3 text-ink/90 italic">“{w.message}”</td>
+                  <td className="px-5 py-3 text-ink/50 text-xs">
+                    {new Date(w.created_at).toLocaleDateString("ka-GE")}
                   </td>
                 </tr>
               ))}

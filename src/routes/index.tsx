@@ -6,6 +6,7 @@ import { Typewriter } from "@/components/Typewriter";
 import { Schedule } from "@/components/Schedule";
 import { Guestbook } from "@/components/Guestbook";
 import { Ban, Sparkles } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const panelImg = "/images/panel.jpg";
 const bowImg = "/images/bow.png";
@@ -357,22 +358,6 @@ function Rsvp() {
   );
 }
 
-function Field({ label, name, required }: { label: string; name: string; required?: boolean }) {
-  return (
-    <div>
-      <label htmlFor={name} className="font-geo text-xs tracking-[0.2em] text-ink/60">
-        {label}
-      </label>
-      <input
-        id={name}
-        name={name}
-        required={required}
-        className="mt-1 w-full rounded-lg border border-ink/15 bg-parchment px-4 py-3 font-geo text-sm text-ink outline-none focus:border-wine"
-      />
-    </div>
-  );
-}
-
 function CoupleImage() {
   return (
     <section className="bg-parchment px-0 pt-16 sm:px-6">
@@ -391,21 +376,58 @@ function CoupleImage() {
 }
 
 function RsvpForm({ onSent }: { onSent: () => void }) {
+  const [name, setName] = useState("");
+  const [plusOne, setPlusOne] = useState("");
   const [attending, setAttending] = useState("დიახ, ვიქნები");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const showPlusOne = attending.includes("+1");
 
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    const fullName = name.trim();
+    if (fullName.length < 2 || fullName.length > 120) {
+      setError("გთხოვთ, მიუთითოთ სახელი და გვარი");
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    const { error: dbError } = await supabase.from("rsvps").insert({
+      full_name: fullName,
+      attending: !attending.includes("ვერ"),
+      plus_one_name: showPlusOne ? plusOne.trim().slice(0, 120) || null : null,
+    });
+    setBusy(false);
+    if (dbError) {
+      setError("ვერ გაიგზავნა, სცადეთ ხელახლა");
+      return;
+    }
+    onSent();
+  }
+
   return (
-    <form
-      className="mt-8 grid gap-4 text-left"
-      onSubmit={(e) => {
-        e.preventDefault();
-        onSent();
-      }}
-    >
-      <Field label="სახელი და გვარი" name="name" required />
+    <form className="mt-8 grid gap-4 text-left" onSubmit={submit}>
       <div>
-        <label className="font-geo text-xs tracking-[0.2em] text-ink/60">დასწრება</label>
+        <label htmlFor="name" className="font-geo text-xs tracking-[0.2em] text-ink/60">
+          სახელი და გვარი
+        </label>
+        <input
+          id="name"
+          name="name"
+          required
+          maxLength={120}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="mt-1 w-full rounded-lg border border-ink/15 bg-parchment px-4 py-3 font-geo text-sm text-ink outline-none focus:border-wine"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="attending" className="font-geo text-xs tracking-[0.2em] text-ink/60">
+          დასწრება
+        </label>
         <select
+          id="attending"
           name="attending"
           value={attending}
           onChange={(e) => setAttending(e.target.value)}
@@ -419,15 +441,29 @@ function RsvpForm({ onSent }: { onSent: () => void }) {
 
       {showPlusOne && (
         <div className="animate-fade-in">
-          <Field label="+1 სახელი და გვარი" name="plusOneName" required />
+          <label htmlFor="plusOneName" className="font-geo text-xs tracking-[0.2em] text-ink/60">
+            +1 სახელი და გვარი
+          </label>
+          <input
+            id="plusOneName"
+            name="plusOneName"
+            required
+            maxLength={120}
+            value={plusOne}
+            onChange={(e) => setPlusOne(e.target.value)}
+            className="mt-1 w-full rounded-lg border border-ink/15 bg-parchment px-4 py-3 font-geo text-sm text-ink outline-none focus:border-wine"
+          />
         </div>
       )}
 
+      {error && <p className="font-geo text-xs text-wine">{error}</p>}
+
       <button
         type="submit"
-        className="mt-2 rounded-full bg-wine px-8 py-3 font-geo text-sm tracking-[0.2em] text-parchment transition hover:opacity-90"
+        disabled={busy}
+        className="mt-2 rounded-full bg-wine px-8 py-3 font-geo text-sm tracking-[0.2em] text-parchment transition hover:opacity-90 disabled:opacity-60"
       >
-        გაგზავნა
+        {busy ? "იგზავნება..." : "გაგზავნა"}
       </button>
     </form>
   );

@@ -1,14 +1,54 @@
-# Welcome to your Lovable project
+# Chiffon Kiss Guestbook
+
+Please import and set up the project from my connected GitHub repository: https://github.com/lunara1111/chiffon-kiss-open
+
+After loading, please make the following updates:
+
+1. FIX ASSETS & FONTS ON VERCEL:
+
+   - Fix all image paths so they display correctly when deployed on Vercel (ensure assets in /public use root-relative paths like '/images/...').
+
+   - Ensure custom/Google fonts load correctly across all mobile and desktop browsers.
+
+2. SCHEDULE UPDATE:
+
+   - In the wedding schedule/timeline section, update or add the entry for 18:00: "18:00 - ვახშამი".
+
+3. RSVP & SIMPLE ADMIN PANEL:
+
+   - Connect the RSVP form to Supabase (or set up the database table `rsvps` / `guests`).
+
+   - Collect the following guest responses:
+
+     * Guest Full Name (სახელი/გვარი)
+
+     * Attendance Status (მოდის / ვერ მოდის)
+
+     * Plus One Full Name (+1-ის სახელი და გვარი, if attending)
+
+   - Create a simple protected `/admin` route with a password lock.
+
+   - On the `/admin` page, render a clean dashboard/table showing:
+
+     * Who is attending
+
+     * Who cannot attend
+
+     * Plus One details
+
+     * Total counts for guests attending
 
 This project was built with [Lovable](https://lovable.dev).
 
+**Live app**: https://kindred-gather-grace.lovable.app
+
 ## Build with Lovable
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/ef1499bc-3e6d-487e-8df6-ceb6ab19adbc).
 
 - **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
@@ -20,10 +60,3 @@ cd <repository-name>
 npm i
 npm run dev
 ```
-
-## Built with
-
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS

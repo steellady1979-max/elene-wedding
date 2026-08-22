@@ -14,7 +14,6 @@ export function Guestbook() {
   const [writing, setWriting] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // სურვილების წამოღება Supabase ბაზიდან
   const fetchWishes = async () => {
     try {
       const { data, error } = await supabase
@@ -23,7 +22,7 @@ export function Guestbook() {
         .order("created_at", { ascending: true });
 
       if (error) {
-        console.error("Supabase error:", error);
+        console.error("Supabase fetch error:", error.message);
         return;
       }
 
@@ -31,30 +30,30 @@ export function Guestbook() {
         setEntries(data.map(item => ({ name: item.full_name, text: item.message })));
       }
     } catch (err) {
-      console.error("Fetch error:", err);
+      console.error("Fetch exception:", err);
     }
   };
 
   useEffect(() => {
-    fetchWishes();
+    void fetchWishes();
   }, []);
 
   const handleAdd = async (text: string, name: string) => {
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("wishes")
         .insert([{ full_name: name, message: text }]);
 
       if (error) {
-        alert("ვერ მოხერხდა სურვილის გაგზავნა: " + error.message);
+        alert("ვერ მოხერხდა ბაზაში ჩწერა: " + error.message);
         return;
       }
 
-      // წარმატების მერე განვახლოთ სია
       await fetchWishes();
       setWriting(false);
-    } catch (err) {
-      console.error("Insert error:", err);
+      alert("სურვილი წარმატებით გაიგზავნა!");
+    } catch (err: any) {
+      alert("შეცდომა: " + (err?.message || "უცნობი შეცდომა"));
     }
   };
 

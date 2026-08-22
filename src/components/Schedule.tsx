@@ -1,7 +1,9 @@
 import { Reveal } from "./Reveal";
 import { SparkleTitle } from "./SparkleTitle";
-import { Church, MapPin, PenLine } from "lucide-react";
-import shatoAsset from "@/assets/shato-gelati.jpg.asset.json";
+import { Church, MapPin, PenLine, UtensilsCrossed } from "lucide-react";
+
+const shatoImg = "/images/shato-gelati.jpg";
+const dinnerImg = "/images/venue-dinner.jpg";
 
 const ITEMS = [
   {
@@ -16,7 +18,14 @@ const ITEMS = [
     icon: PenLine,
     title: "ხელისმოწერა",
     map: "https://maps.app.goo.gl/ARufmDYp83TKBAQ57",
-    image: shatoAsset.url,
+    image: shatoImg,
+  },
+  {
+    time: "18:00",
+    icon: UtensilsCrossed,
+    title: "ვახშამი",
+    map: "https://maps.app.goo.gl/ARufmDYp83TKBAQ57",
+    image: dinnerImg,
   },
 ];
 

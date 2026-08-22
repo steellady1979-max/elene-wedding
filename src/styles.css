@@ -145,8 +145,7 @@
 
 @font-face {
   font-family: "Mecomicse";
-  src: url("/__l5e/assets-v1/a7a71887-7fae-41c8-aabd-785694eaf40f/tfmecomicse-light.otf")
-    format("opentype");
+  src: url("/fonts/tfmecomicse-light.otf") format("opentype");
   font-weight: 300;
   font-display: swap;
 }

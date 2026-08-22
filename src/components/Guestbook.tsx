@@ -2,33 +2,43 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, PenLine } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { SparkleTitle } from "@/components/SparkleTitle";
+import { supabase } from "@/integrations/supabase/client";
 
 type Entry = { text: string; name: string };
-
-const STORAGE_KEY = "wedding-guestbook";
 
 function useEntries() {
   const [entries, setEntries] = useState<Entry[]>([]);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setEntries(JSON.parse(raw) as Entry[]);
-    } catch {
-      /* ignore */
-    }
-  }, []);
-
-  const add = useCallback((entry: Entry) => {
-    setEntries((prev) => {
-      const next = [...prev, entry];
+    async function fetchWishes() {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+        const { data, error } = await supabase
+          .from("wishes")
+          .select("full_name, message, created_at")
+          .order("created_at", { ascending: true });
+
+        if (!error && data) {
+          setEntries(data.map(item => ({ name: item.full_name, text: item.message })));
+        }
       } catch {
         /* ignore */
       }
-      return next;
-    });
+    }
+    fetchWishes();
+  }, []);
+
+  const add = useCallback(async (entry: Entry) => {
+    try {
+      const { error } = await supabase
+        .from("wishes")
+        .insert([{ full_name: entry.name, message: entry.text }]);
+
+      if (!error) {
+        setEntries((prev) => [...prev, entry]);
+      }
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   return { entries, add };
@@ -89,13 +99,9 @@ export function Guestbook() {
             onMouseLeave={() => setPaused(false)}
           >
             <div className="book-inner">
-              {/* Static left page */}
               <PageFace side="left" entry={current[0]} />
-
-              {/* Static right page (shows next spread during flip) */}
               <PageFace side="right" entry={flip ? next[1] : current[1]} />
 
-              {/* Turning leaf */}
               {flip && (
                 <div className={`book-leaf ${flip.dir === 1 ? "turn-fwd" : "turn-back"}`}>
                   <div className="book-leaf-face front">
@@ -154,16 +160,15 @@ export function Guestbook() {
           {writing ? (
             <form
               className="mx-auto grid max-w-md gap-3 text-left"
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
                 const form = e.currentTarget;
                 const data = new FormData(form);
                 const text = String(data.get("text") ?? "").trim();
                 const name = String(data.get("name") ?? "").trim();
                 if (!text || !name) return;
-                add({ text, name });
+                await add({ text, name });
                 setWriting(false);
-                setPage((p) => (p === 0 && entries.length === 0 ? 0 : Math.floor(entries.length / 2)));
               }}
             >
               <textarea

@@ -12,6 +12,11 @@ export function Guestbook() {
   const [flip, setFlip] = useState<null | { dir: 1 | -1; from: number; to: number }>(null);
   const [paused, setPaused] = useState(false);
   const [writing, setWriting] = useState(false);
+  
+  const [nameInput, setNameInput] = useState("");
+  const [textInput, setTextInput] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fetchWishes = async () => {
@@ -38,22 +43,34 @@ export function Guestbook() {
     void fetchWishes();
   }, []);
 
-  const handleAdd = async (text: string, name: string) => {
+  const handleSendClick = async () => {
+    if (!nameInput.trim() || !textInput.trim()) {
+      alert("გთხოვთ შეავსოთ ორივე ველი!");
+      return;
+    }
+
+    setLoading(true);
     try {
-      const { data, error } = await supabase
+      console.log("Sending data to Supabase...", { nameInput, textInput });
+      const { error } = await supabase
         .from("wishes")
-        .insert([{ full_name: name, message: text }]);
+        .insert([{ full_name: nameInput.trim(), message: textInput.trim() }]);
 
       if (error) {
-        alert("ვერ მოხერხდა ბაზაში ჩწერა: " + error.message);
+        alert("ბაზის შეცდომა: " + error.message);
+        setLoading(false);
         return;
       }
 
-      await fetchWishes();
-      setWriting(false);
       alert("სურვილი წარმატებით გაიგზავნა!");
+      setNameInput("");
+      setTextInput("");
+      setWriting(false);
+      await fetchWishes();
     } catch (err: any) {
-      alert("შეცდომა: " + (err?.message || "უცნობი შეცდომა"));
+      alert("კრიტიკული შეცდომა: " + (err?.message || "უცნობი"));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -163,38 +180,29 @@ export function Guestbook() {
 
         <div className="mt-8">
           {writing ? (
-            <form
-              className="mx-auto grid max-w-md gap-3 text-left"
-              onSubmit={async (e) => {
-                e.preventDefault();
-                const form = e.currentTarget;
-                const data = new FormData(form);
-                const text = String(data.get("text") ?? "").trim();
-                const name = String(data.get("name") ?? "").trim();
-                if (!text || !name) return;
-                await handleAdd(text, name);
-                form.reset();
-              }}
-            >
+            <div className="mx-auto grid max-w-md gap-3 text-left">
               <textarea
-                name="text"
                 rows={3}
-                required
+                value={textInput}
+                onChange={(e) => setTextInput(e.target.value)}
                 placeholder="თქვენი სურვილი..."
                 className="w-full rounded-lg border border-ink/15 bg-parchment px-4 py-3 font-geo text-sm text-ink outline-none focus:border-wine"
               />
               <input
-                name="name"
-                required
+                type="text"
+                value={nameInput}
+                onChange={(e) => setNameInput(e.target.value)}
                 placeholder="თქვენი სახელი"
                 className="w-full rounded-lg border border-ink/15 bg-parchment px-4 py-3 font-geo text-sm text-ink outline-none focus:border-wine"
               />
               <div className="flex justify-center gap-3">
                 <button
-                  type="submit"
-                  className="rounded-full bg-wine px-7 py-2.5 font-geo text-xs tracking-[0.2em] text-parchment transition hover:opacity-90"
+                  type="button"
+                  disabled={loading}
+                  onClick={() => void handleSendClick()}
+                  className="rounded-full bg-wine px-7 py-2.5 font-geo text-xs tracking-[0.2em] text-parchment transition hover:opacity-90 disabled:opacity-50"
                 >
-                  ჩაწერა
+                  {loading ? "იგზავნება..." : "ჩაწერა"}
                 </button>
                 <button
                   type="button"
@@ -204,7 +212,7 @@ export function Guestbook() {
                   გაუქმება
                 </button>
               </div>
-            </form>
+            </div>
           ) : (
             <button
               type="button"

@@ -5,6 +5,7 @@ import { SparkleTitle } from "@/components/SparkleTitle";
 import { Typewriter } from "@/components/Typewriter";
 import { Schedule } from "@/components/Schedule";
 import { Guestbook } from "@/components/Guestbook";
+import MusicPlayer from "@/components/MusicPlayer";
 import { Ban, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -94,6 +95,8 @@ function Invitation() {
           />
         </div>
       </div>
+
+      <MusicPlayer />
     </main>
   );
 }

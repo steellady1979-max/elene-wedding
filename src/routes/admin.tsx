@@ -1,0 +1,184 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useCallback, useEffect, useState } from "react";
+import { Lock, LogOut, RefreshCw } from "lucide-react";
+import { getRsvps, lockAdmin, unlockAdmin, type RsvpRow } from "@/lib/admin.functions";
+
+export const Route = createFileRoute("/admin")({
+  head: () => ({
+    meta: [
+      { title: "ადმინი — თეკლა & ზაური RSVP" },
+      { name: "description", content: "დახურული გვერდი ქორწილის დასტურების სანახავად." },
+      { name: "robots", content: "noindex, nofollow" },
+      { property: "og:title", content: "ადმინი — RSVP" },
+      { property: "og:description", content: "დახურული გვერდი ქორწილის დასტურების სანახავად." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
+  component: Admin,
+});
+
+function Admin() {
+  const load = useServerFn(getRsvps);
+  const unlock = useServerFn(unlockAdmin);
+  const lock = useServerFn(lockAdmin);
+
+  const [rows, setRows] = useState<RsvpRow[] | null>(null);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const refresh = useCallback(async () => {
+    setBusy(true);
+    try {
+      const res = await load({ data: undefined });
+      setRows(res.locked ? null : res.rows);
+    } finally {
+      setBusy(false);
+    }
+  }, [load]);
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setBusy(true);
+    const res = await unlock({ data: { password } });
+    setBusy(false);
+    if (!res.ok) {
+      setError("პაროლი არასწორია");
+      return;
+    }
+    setPassword("");
+    void refresh();
+  }
+
+  if (rows === null) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-backdrop px-6">
+        <form
+          onSubmit={onSubmit}
+          className="w-full max-w-sm rounded-2xl border border-ink/10 bg-parchment/95 p-8 shadow-soft"
+        >
+          <div className="flex items-center gap-2">
+            <Lock className="h-4 w-4 text-wine" strokeWidth={1.5} />
+            <h1 className="font-geo text-lg tracking-[0.15em] text-ink">ადმინი</h1>
+          </div>
+          <label htmlFor="pw" className="mt-6 block font-geo text-xs tracking-[0.2em] text-ink/60">
+            პაროლი
+          </label>
+          <input
+            id="pw"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="mt-1 w-full rounded-lg border border-ink/15 bg-parchment px-4 py-3 font-geo text-sm text-ink outline-none focus:border-wine"
+          />
+          {error && <p className="mt-2 font-geo text-xs text-wine">{error}</p>}
+          <button
+            type="submit"
+            disabled={busy}
+            className="mt-5 w-full rounded-full bg-wine px-8 py-3 font-geo text-sm tracking-[0.2em] text-parchment transition hover:opacity-90 disabled:opacity-60"
+          >
+            შესვლა
+          </button>
+        </form>
+      </main>
+    );
+  }
+
+  const yes = rows.filter((r) => r.attending);
+  const no = rows.filter((r) => !r.attending);
+  const plusOnes = yes.filter((r) => r.plus_one_name && r.plus_one_name.trim().length > 0);
+  const totalGuests = yes.length + plusOnes.length;
+
+  return (
+    <main className="min-h-screen bg-backdrop px-4 py-12 sm:px-6">
+      <div className="mx-auto max-w-4xl">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="font-geo text-2xl tracking-[0.12em] text-ink">დასტურები</h1>
+          <div className="flex gap-2">
+            <button
+              onClick={() => void refresh()}
+              disabled={busy}
+              className="inline-flex items-center gap-2 rounded-full border border-wine/25 px-4 py-2 font-geo text-xs tracking-[0.15em] text-wine transition hover:bg-wine hover:text-parchment disabled:opacity-60"
+            >
+              <RefreshCw className="h-3.5 w-3.5" strokeWidth={1.5} />
+              განახლება
+            </button>
+            <button
+              onClick={async () => {
+                await lock({ data: undefined });
+                setRows(null);
+              }}
+              className="inline-flex items-center gap-2 rounded-full border border-ink/20 px-4 py-2 font-geo text-xs tracking-[0.15em] text-ink/70 transition hover:bg-ink/5"
+            >
+              <LogOut className="h-3.5 w-3.5" strokeWidth={1.5} />
+              გასვლა
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <Stat label="სულ სტუმარი" value={totalGuests} />
+          <Stat label="მოდის" value={yes.length} />
+          <Stat label="+1" value={plusOnes.length} />
+          <Stat label="ვერ მოდის" value={no.length} />
+        </div>
+
+        <Table title="მოდის" rows={yes} />
+        <Table title="ვერ მოდის" rows={no} />
+      </div>
+    </main>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-2xl border border-ink/10 bg-parchment/95 p-5 text-center shadow-soft">
+      <p className="font-geo text-3xl text-wine">{value}</p>
+      <p className="mt-1 font-geo text-[0.65rem] tracking-[0.2em] text-ink/60">{label}</p>
+    </div>
+  );
+}
+
+function Table({ title, rows }: { title: string; rows: RsvpRow[] }) {
+  return (
+    <section className="mt-8 overflow-hidden rounded-2xl border border-ink/10 bg-parchment/95 shadow-soft">
+      <h2 className="border-b border-ink/10 px-5 py-4 font-geo text-sm tracking-[0.2em] text-ink/70">
+        {title} ({rows.length})
+      </h2>
+      {rows.length === 0 ? (
+        <p className="px-5 py-6 font-geo text-sm text-ink/50">ჯერ არავინ</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left font-geo text-sm text-ink/85">
+            <thead>
+              <tr className="border-b border-ink/10 text-[0.65rem] tracking-[0.2em] text-ink/50">
+                <th className="px-5 py-3">სახელი და გვარი</th>
+                <th className="px-5 py-3">+1</th>
+                <th className="px-5 py-3">თარიღი</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r) => (
+                <tr key={r.id} className="border-b border-ink/5 last:border-0">
+                  <td className="px-5 py-3">{r.full_name}</td>
+                  <td className="px-5 py-3 text-ink/70">{r.plus_one_name || "—"}</td>
+                  <td className="px-5 py-3 text-ink/50">
+                    {new Date(r.created_at).toLocaleDateString("ka-GE")}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}

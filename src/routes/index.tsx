@@ -1,16 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import panelImg from "@/assets/panel.jpg";
-import bowImg from "@/assets/bow.png";
-import archImg from "@/assets/arch.jpg";
-import envelopeAsset from "@/assets/envelope.png.asset.json";
-import coupleAsset from "@/assets/couple-balcony.jpg.asset.json";
 import { Reveal } from "@/components/Reveal";
 import { SparkleTitle } from "@/components/SparkleTitle";
 import { Typewriter } from "@/components/Typewriter";
 import { Schedule } from "@/components/Schedule";
 import { Guestbook } from "@/components/Guestbook";
 import { Ban, Sparkles } from "lucide-react";
+
+const panelImg = "/images/panel.jpg";
+const bowImg = "/images/bow.png";
+const archImg = "/images/arch.jpg";
+const envelopeImg = "/images/envelope.png";
+const coupleImg = "/images/couple-balcony.jpg";
 
 const WEDDING_DATE = new Date("2026-09-13T15:00:00+04:00");
 
@@ -193,7 +194,7 @@ function EnvelopeSection() {
         >
           {/* back of envelope */}
           <img
-            src={envelopeAsset.url}
+            src={envelopeImg}
             alt="ვარდისფერი კონვერტი ოქროსფერი ბეჭდით"
             className="relative z-0 w-full drop-shadow-[0_20px_35px_rgba(90,74,56,0.25)]"
           />
@@ -236,7 +237,7 @@ function EnvelopeSection() {
           <div
             className="pointer-events-none absolute inset-0 z-20"
             style={{
-              backgroundImage: `url(${envelopeAsset.url})`,
+              backgroundImage: `url(${envelopeImg})`,
               backgroundSize: "100% 100%",
               clipPath: "polygon(0 0, 0 100%, 100% 100%, 100% 0, 50% 68%)",
             }}
@@ -254,7 +255,7 @@ function EnvelopeSection() {
             <div
               className="absolute inset-0"
               style={{
-                backgroundImage: `url(${envelopeAsset.url})`,
+                backgroundImage: `url(${envelopeImg})`,
                 backgroundSize: "100% 100%",
                 clipPath: "polygon(0 0, 100% 0, 50% 68%)",
                 backfaceVisibility: "hidden",
@@ -378,7 +379,7 @@ function CoupleImage() {
       <Reveal>
         <figure className="mx-auto max-w-none sm:max-w-xl">
           <img
-            src={coupleAsset.url}
+            src={coupleImg}
             alt="აკვარელით დახატული თეკლა და ზაური იტალიურ ბალკონზე"
             loading="lazy"
             className="w-full rounded-none border-y border-ink/10 shadow-soft sm:rounded-2xl sm:border"

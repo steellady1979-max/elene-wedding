@@ -6,51 +6,57 @@ import { supabase } from "@/integrations/supabase/client";
 
 type Entry = { text: string; name: string };
 
-function useEntries() {
-  const [entries, setEntries] = useState<Entry[]>([]);
-
-  useEffect(() => {
-    async function fetchWishes() {
-      try {
-        const { data, error } = await supabase
-          .from("wishes")
-          .select("full_name, message, created_at")
-          .order("created_at", { ascending: true });
-
-        if (!error && data) {
-          setEntries(data.map(item => ({ name: item.full_name, text: item.message })));
-        }
-      } catch {
-        /* ignore */
-      }
-    }
-    fetchWishes();
-  }, []);
-
-  const add = useCallback(async (entry: Entry) => {
-    try {
-      const { error } = await supabase
-        .from("wishes")
-        .insert([{ full_name: entry.name, message: entry.text }]);
-
-      if (!error) {
-        setEntries((prev) => [...prev, entry]);
-      }
-    } catch {
-      /* ignore */
-    }
-  }, []);
-
-  return { entries, add };
-}
-
 export function Guestbook() {
-  const { entries, add } = useEntries();
+  const [entries, setEntries] = useState<Entry[]>([]);
   const [page, setPage] = useState(0);
   const [flip, setFlip] = useState<null | { dir: 1 | -1; from: number; to: number }>(null);
   const [paused, setPaused] = useState(false);
   const [writing, setWriting] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // სურვილების წამოღება Supabase ბაზიდან
+  const fetchWishes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("wishes")
+        .select("full_name, message, created_at")
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        console.error("Supabase error:", error);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        setEntries(data.map(item => ({ name: item.full_name, text: item.message })));
+      }
+    } catch (err) {
+      console.error("Fetch error:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchWishes();
+  }, []);
+
+  const handleAdd = async (text: string, name: string) => {
+    try {
+      const { error } = await supabase
+        .from("wishes")
+        .insert([{ full_name: name, message: text }]);
+
+      if (error) {
+        alert("ვერ მოხერხდა სურვილის გაგზავნა: " + error.message);
+        return;
+      }
+
+      // წარმატების მერე განვახლოთ სია
+      await fetchWishes();
+      setWriting(false);
+    } catch (err) {
+      console.error("Insert error:", err);
+    }
+  };
 
   const spreads: Entry[][] = [];
   for (let i = 0; i < entries.length; i += 2) spreads.push(entries.slice(i, i + 2));
@@ -167,8 +173,8 @@ export function Guestbook() {
                 const text = String(data.get("text") ?? "").trim();
                 const name = String(data.get("name") ?? "").trim();
                 if (!text || !name) return;
-                await add({ text, name });
-                setWriting(false);
+                await handleAdd(text, name);
+                form.reset();
               }}
             >
               <textarea

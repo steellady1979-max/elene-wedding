@@ -77,6 +77,40 @@ function Admin() {
     void refresh();
   }
 
+  const exportToExcel = () => {
+    let csvContent = "\uFEFFკატეგორია,სახელი / ავტორი,სტატუსი / მილოცვა, +1 პერსონა, თარიღი\n";
+
+    if (rows) {
+      rows.forEach((r) => {
+        const category = r.attending ? "მოდის" : "ვერ მოდის";
+        const name = `"${(r.full_name || "").replace(/"/g, '""')}"`;
+        const status = r.attending ? "დიახ" : "არა";
+        const plusOne = `"${(r.plus_one_name || "-").replace(/"/g, '""')}"`;
+        const date = `"${new Date(r.created_at).toLocaleDateString("ka-GE")}"`;
+
+        csvContent += `"${category}",${name},${status},${plusOne},${date}\n`;
+      });
+    }
+
+    wishes.forEach((w) => {
+      const category = "სურვილი";
+      const name = `"${(w.full_name || "").replace(/"/g, '""')}"`;
+      const message = `"${(w.message || "").replace(/"/g, '""')}"`;
+      const date = `"${new Date(w.created_at).toLocaleDateString("ka-GE")}"`;
+
+      csvContent += `"${category}",${name},${message},-,${date}\n`;
+    });
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Tekla_Zauri_Guests_Wishes_${new Date().toISOString().split("T")[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (rows === null) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-backdrop px-6">
@@ -122,7 +156,13 @@ function Admin() {
       <div className="mx-auto max-w-4xl">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="font-geo text-2xl tracking-[0.12em] text-ink">პანელი & სურვილები</h1>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
+            <button
+              onClick={exportToExcel}
+              className="inline-flex items-center gap-2 rounded-full bg-wine px-4 py-2 font-geo text-xs tracking-[0.15em] text-parchment transition hover:opacity-90 shadow-sm"
+            >
+              📊 ექსელში გადმოწერა
+            </button>
             <button
               onClick={() => void refresh()}
               disabled={busy}

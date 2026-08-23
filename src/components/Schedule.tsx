@@ -40,7 +40,7 @@ export function Schedule() {
             </div>
             <ol className="mt-6 grid gap-5">
               {ITEMS.map(({ time, icon: Icon, title, map, image }, i) => (
-                <li key={time} className="relative flex gap-4">
+                <li key={time} className="relative flex gap-4 text-center sm:text-left">
                   <div className="flex flex-col items-center pl-5 sm:pl-1">
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-wine/20 bg-wine/10">
                       <Icon className="h-4 w-4 text-wine" strokeWidth={1.5} />
@@ -60,12 +60,14 @@ export function Schedule() {
                       რუკაზე ნახვა
                     </a>
                     {image && (
-                      <img
-                        src={image}
-                        alt="შატო გელათის საქორწილო ცერემონიის აკვარელი"
-                        loading="lazy"
-                        className="mt-4 w-full rounded-none border-y border-ink/10 shadow-soft sm:rounded-xl sm:border"
-                      />
+                      <div className="mt-4 flex justify-center -ml-[3.25rem] sm:ml-0">
+                        <img
+                          src={image}
+                          alt="შატო გელათის საქორწილო ცერემონიის აკვარელი"
+                          loading="lazy"
+                          className="mx-auto w-full max-w-sm rounded-none border-y border-ink/10 shadow-soft sm:max-w-md sm:rounded-xl sm:border"
+                        />
+                      </div>
                     )}
                   </div>
                 </li>

@@ -218,8 +218,11 @@ function Stat({ label, value }: { label: string; value: number }) {
 function Table({ title, rows }: { title: string; rows: RsvpRow[] }) {
   return (
     <section className="mt-8 overflow-hidden rounded-2xl border border-ink/10 bg-parchment/95 shadow-soft">
-      <h2 className="border-b border-ink/10 px-5 py-4 font-geo text-sm tracking-[0.2em] text-ink/70">
-        {title} ({rows.length})
+      <h2 className="flex items-center justify-between gap-3 border-b border-ink/10 bg-ink/[0.03] px-5 py-4 font-geo text-sm tracking-[0.2em] text-ink/70">
+        <span>{title}</span>
+        <span className="rounded-full bg-wine/10 px-3 py-1 text-[0.7rem] tracking-[0.1em] text-wine">
+          {rows.length}
+        </span>
       </h2>
       {rows.length === 0 ? (
         <p className="px-5 py-6 font-geo text-sm text-ink/50">ჯერ არავინ</p>
@@ -235,8 +238,11 @@ function Table({ title, rows }: { title: string; rows: RsvpRow[] }) {
             </thead>
             <tbody>
               {rows.map((r) => (
-                <tr key={r.id} className="border-b border-ink/5 last:border-0">
-                  <td className="px-5 py-3">{r.full_name}</td>
+                <tr
+                  key={r.id}
+                  className="border-b border-ink/5 transition last:border-0 odd:bg-ink/[0.015] hover:bg-wine/5"
+                >
+                  <td className="px-5 py-3.5 font-medium text-ink">{r.full_name}</td>
                   <td className="px-5 py-3 text-ink/70">{r.plus_one_name || "—"}</td>
                   <td className="px-5 py-3 text-ink/50">
                     {new Date(r.created_at).toLocaleDateString("ka-GE")}
@@ -254,8 +260,11 @@ function Table({ title, rows }: { title: string; rows: RsvpRow[] }) {
 function WishesTable({ title, wishes }: { title: string; wishes: WishRow[] }) {
   return (
     <section className="mt-8 overflow-hidden rounded-2xl border border-ink/10 bg-parchment/95 shadow-soft">
-      <h2 className="border-b border-ink/10 px-5 py-4 font-geo text-sm tracking-[0.2em] text-ink/70">
-        {title} ({wishes.length})
+      <h2 className="flex items-center justify-between gap-3 border-b border-ink/10 bg-ink/[0.03] px-5 py-4 font-geo text-sm tracking-[0.2em] text-ink/70">
+        <span>{title}</span>
+        <span className="rounded-full bg-wine/10 px-3 py-1 text-[0.7rem] tracking-[0.1em] text-wine">
+          {wishes.length}
+        </span>
       </h2>
       {wishes.length === 0 ? (
         <p className="px-5 py-6 font-geo text-sm text-ink/50">ჯერ სურვილები არ არის</p>
@@ -271,7 +280,10 @@ function WishesTable({ title, wishes }: { title: string; wishes: WishRow[] }) {
             </thead>
             <tbody>
               {wishes.map((w) => (
-                <tr key={w.id} className="border-b border-ink/5 last:border-0">
+                <tr
+                  key={w.id}
+                  className="border-b border-ink/5 transition last:border-0 odd:bg-ink/[0.015] hover:bg-wine/5"
+                >
                   <td className="px-5 py-3 font-semibold text-wine">{w.full_name}</td>
                   <td className="px-5 py-3 text-ink/90 italic">“{w.message}”</td>
                   <td className="px-5 py-3 text-ink/50 text-xs">

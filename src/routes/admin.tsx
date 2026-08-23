@@ -152,11 +152,16 @@ function Admin() {
   const totalGuests = yes.length + plusOnes.length;
 
   return (
-    <main className="min-h-screen bg-backdrop px-4 py-12 sm:px-6">
-      <div className="mx-auto max-w-4xl">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="font-geo text-2xl tracking-[0.12em] text-ink">პანელი & სურვილები</h1>
-          <div className="flex gap-2 items-center">
+    <main className="min-h-screen bg-backdrop px-4 py-10 sm:px-6 sm:py-14">
+      <div className="mx-auto max-w-5xl">
+        <div className="flex flex-wrap items-end justify-between gap-4 border-b border-ink/10 pb-6">
+          <div>
+            <p className="font-geo text-[0.65rem] tracking-[0.3em] text-ink/45">ADMIN</p>
+            <h1 className="mt-1 font-geo text-2xl tracking-[0.12em] text-ink sm:text-3xl">
+              პანელი & სურვილები
+            </h1>
+          </div>
+          <div className="flex flex-wrap gap-2 items-center">
             <button
               onClick={exportToExcel}
               className="inline-flex items-center gap-2 rounded-full bg-wine px-4 py-2 font-geo text-xs tracking-[0.15em] text-parchment transition hover:opacity-90 shadow-sm"
@@ -184,7 +189,7 @@ function Admin() {
           </div>
         </div>
 
-        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
           <Stat label="სულ სტუმარი" value={totalGuests} />
           <Stat label="მოდის" value={yes.length} />
           <Stat label="+1" value={plusOnes.length} />
@@ -203,9 +208,9 @@ function Admin() {
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-2xl border border-ink/10 bg-parchment/95 p-5 text-center shadow-soft">
-      <p className="font-geo text-3xl text-wine">{value}</p>
-      <p className="mt-1 font-geo text-[0.65rem] tracking-[0.2em] text-ink/60">{label}</p>
+    <div className="rounded-2xl border border-ink/10 bg-gradient-to-b from-parchment to-parchment/80 p-5 text-center shadow-soft transition hover:-translate-y-0.5 hover:shadow-lg">
+      <p className="font-geo text-3xl text-wine sm:text-4xl">{value}</p>
+      <p className="mt-1.5 font-geo text-[0.6rem] tracking-[0.22em] text-ink/55 uppercase">{label}</p>
     </div>
   );
 }

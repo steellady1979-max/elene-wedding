@@ -40,7 +40,7 @@ export function Schedule() {
             </div>
             <ol className="mt-6 grid gap-5">
               {ITEMS.map(({ time, icon: Icon, title, map, image }, i) => (
-                <li key={time} className="relative flex gap-4 text-center sm:text-left">
+                <li key={time} className="relative flex gap-4">
                   <div className="flex flex-col items-center pl-5 sm:pl-1">
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-wine/20 bg-wine/10">
                       <Icon className="h-4 w-4 text-wine" strokeWidth={1.5} />

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 
-const VIDEO_ID = "cE6wxDqdOV0";
+const VIDEO_ID = "vGJTaP6anOU";
 
 declare global {
   interface Window {

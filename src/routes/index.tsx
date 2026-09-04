@@ -6,28 +6,28 @@ import { Typewriter } from "@/components/Typewriter";
 import { Schedule } from "@/components/Schedule";
 import { Guestbook } from "@/components/Guestbook";
 import MusicPlayer from "@/components/MusicPlayer";
-import { Ban, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const panelImg = "/images/panel.jpg";
 const bowImg = "/images/bow.png";
 const archImg = "/images/arch.jpg";
 const envelopeImg = "/images/envelope.png";
-const coupleImg = "/images/couple-balcony.jpg";
+const coupleImg = "/images/couple.jpg";
 
-const WEDDING_DATE = new Date("2026-09-13T15:00:00+04:00");
+const WEDDING_DATE = new Date("2026-10-15T16:00:00+04:00");
 
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "თეკლა & ზაური — ქორწილის მოწვევა" },
+      { title: "ლაშა & მარიამი — ქორწილის მოწვევა" },
       {
         name: "description",
         content:
-          "თეკლა და ზაური გეპატიჟებიან 13 სექტემბერს, 2026 — განრიგი, დრესკოდი, ლოკაცია და RSVP.",
+          "ლაშა და მარიამი გეპატიჟებიან 15 ოქტომბერს, 2026 — განრიგი, დრესკოდი, ლოკაცია და RSVP.",
       },
-      { property: "og:title", content: "თეკლა & ზაური — 13 სექტემბერი, 2026" },
+      { property: "og:title", content: "ლაშა & მარიამი — 15 ოქტომბერი, 2026" },
       {
         property: "og:description",
         content: "ინტერაქტიული ქორწილის მოწვევა — განრიგი, ლოკაცია და RSVP.",
@@ -46,7 +46,7 @@ function Invitation() {
 
   return (
     <main className="relative min-h-screen bg-backdrop">
-      <h1 className="sr-only">თეკლა და ზაური — ქორწილის მოწვევა, 13 სექტემბერი, 2026</h1>
+      <h1 className="sr-only">ლაშა და მარიამი — ქორწილის მოწვევა, 15 ოქტომბერი, 2026</h1>
 
       <div
         className={`transition-all duration-[1600ms] ease-out ${
@@ -134,14 +134,14 @@ function Hero() {
       />
       <div className="relative z-10 flex flex-col items-center px-8 text-center">
         <SparkleTitle as="p" shimmer={false} className="font-geo text-[13vw] leading-[1.1] sm:text-6xl">
-          თეკლა
+          ლაშა
         </SparkleTitle>
         <p className="my-1 font-geo text-2xl text-ink/70">&amp;</p>
         <SparkleTitle as="p" shimmer={false} className="font-geo text-[13vw] leading-[1.1] sm:text-6xl">
-          ზაური
+          მარიამი
         </SparkleTitle>
         <div className="mt-8 rounded-full bg-parchment/70 px-6 py-3 backdrop-blur-[2px]">
-          <p className="font-geo text-sm tracking-[0.3em] text-ink/85">13 სექტემბერი, 2026</p>
+          <p className="font-geo text-sm tracking-[0.3em] text-ink/85">15 ოქტომბერი, 2026</p>
         </div>
 
         <Countdown />
@@ -224,7 +224,7 @@ function EnvelopeSection() {
                   className="mt-2 font-geo text-[0.9rem] leading-[1.95] text-ink/85"
                 />
                 <Typewriter
-                  text="გელოდებით — თეკლა & ზაური"
+                  text="გელოდებით — ლაშა & მარიამი"
                   speed={55}
                   startDelay={7800}
                   className="mt-4 font-geo text-[0.9rem] text-ink/70"
@@ -292,12 +292,7 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
 }
 
 const DRESS = [
-  { icon: Sparkles, label: "სტილი", text: "ელეგანტური & ფერადი." },
-  {
-    icon: Ban,
-    label: "გამონაკლისი",
-    text: "გთხოვთ, არ ჩაიცვათ შინდისფერი (ბურგუნდი).",
-  },
+  { icon: Sparkles, label: "სტილი", text: "სადა და ელეგანტური." },
 ];
 
 
@@ -368,7 +363,7 @@ function CoupleImage() {
         <figure className="mx-auto max-w-none sm:max-w-xl">
           <img
             src={coupleImg}
-            alt="აკვარელით დახატული თეკლა და ზაური იტალიურ ბალკონზე"
+            alt="აკვარელით დახატული ლაშა და მარიამი იტალიურ ბალკონზე"
             loading="lazy"
             className="w-full rounded-none border-y border-ink/10 shadow-soft sm:rounded-2xl sm:border"
           />

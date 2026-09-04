@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 const panelImg = "/images/panel.jpg";
 const bowImg = "/images/bow.png";
 const archImg = "/images/arch.jpg";
-const envelopeImg = "/images/envelope.png";
+const envelopeImg = "/images/envelope-olive.png";
 const coupleImg = "/images/couple.jpg";
 
 const WEDDING_DATE = new Date("2026-10-15T16:00:00+04:00");

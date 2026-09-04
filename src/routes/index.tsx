@@ -199,7 +199,7 @@ function EnvelopeSection() {
           {/* back of envelope */}
           <img
             src={envelopeImg}
-            alt="ვარდისფერი კონვერტი ოქროსფერი ბეჭდით"
+            alt="ოლივისფერი კონვერტი ოქროსფერი ბეჭდით"
             className="relative z-0 w-full drop-shadow-[0_20px_35px_rgba(90,74,56,0.25)]"
           />
 

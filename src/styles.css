@@ -133,13 +133,13 @@
 }
 
 :root {
-  --backdrop: oklch(0.26 0.085 18);
-  --parchment: oklch(0.985 0.004 120);
-  --ink: oklch(0.3 0.055 150);
-  --wine: oklch(0.4 0.135 18);
-  --sage: oklch(0.55 0.075 150);
-  --shadow-soft: 0 12px 30px -12px oklch(0.26 0.085 18 / 0.35);
-  --shadow-door: 0 0 60px -10px oklch(0.22 0.07 18 / 0.5);
+  --backdrop: oklch(0.33 0.045 125);
+  --parchment: oklch(0.985 0.008 110);
+  --ink: oklch(0.3 0.04 135);
+  --wine: oklch(0.44 0.065 128);
+  --sage: oklch(0.6 0.055 130);
+  --shadow-soft: 0 12px 30px -12px oklch(0.3 0.05 125 / 0.35);
+  --shadow-door: 0 0 60px -10px oklch(0.28 0.045 125 / 0.5);
 }
 
 

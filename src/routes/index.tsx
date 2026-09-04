@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 const panelImg = "/images/panel.jpg";
 const bowImg = "/images/bow.png";
 const archImg = "/images/arch.jpg";
-const envelopeImg = "/images/envelope.png";
+const envelopeImg = "/images/envelope-olive.png";
 const coupleImg = "/images/couple.jpg";
 
 const WEDDING_DATE = new Date("2026-10-15T16:00:00+04:00");
@@ -199,7 +199,7 @@ function EnvelopeSection() {
           {/* back of envelope */}
           <img
             src={envelopeImg}
-            alt="ვარდისფერი კონვერტი ოქროსფერი ბეჭდით"
+            alt="ოლივისფერი კონვერტი ოქროსფერი ბეჭდით"
             className="relative z-0 w-full drop-shadow-[0_20px_35px_rgba(90,74,56,0.25)]"
           />
 

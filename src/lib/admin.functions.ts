@@ -39,8 +39,7 @@ export type RsvpRow = {
 export const unlockAdmin = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ password: z.string().max(200) }).parse(input))
   .handler(async ({ data }) => {
-    const expected = process.env["ADMIN_PASSWORD"] || "mariam-lasha";
-    if (!matches(data.password, expected)) return { ok: false as const };
+    if (!isValidPassword(data.password)) return { ok: false as const };
     const session = await useSession<AdminSession>(sessionConfig());
     await session.update({ unlocked: true });
     return { ok: true as const };

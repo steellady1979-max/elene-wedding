@@ -182,10 +182,11 @@ function EnvelopeSection() {
   return (
     <section className="relative flex flex-col items-center overflow-hidden bg-parchment px-6 pb-24 pt-24">
       <FloralCorner className="left-[-14%] top-2 w-[46%] max-w-[16rem]" />
-      <FloralCorner className="right-[-14%] top-2 w-[46%] max-w-[16rem]" flip />
-      <p className="mb-8 font-geo text-xs tracking-[0.35em] text-ink/55">
+      <FloralCorner className="right-[-14%] top-2 w-[46%] max-w-[16rem]" flip level="medium" />
+      <p className="relative z-10 mb-8 font-geo text-xs tracking-[0.35em] text-ink/55">
         {opened ? "ჩვენი სიტყვები" : "შეეხე კონვერტს"}
       </p>
+
 
       <div
         className={`w-full max-w-md transition-all duration-[1200ms] ease-out ${

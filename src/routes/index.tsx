@@ -7,6 +7,8 @@ import { Schedule } from "@/components/Schedule";
 import { Guestbook } from "@/components/Guestbook";
 import MusicPlayer from "@/components/MusicPlayer";
 import { FloralCorner } from "@/components/FloralCorner";
+import { supabase } from "@/integrations/supabase/client";
+
 
 
 const panelImg = "/images/panel.jpg";
@@ -394,11 +396,10 @@ function CoupleImage() {
 
 function RsvpForm({ onSent }: { onSent: () => void }) {
   const [name, setName] = useState("");
-  const [plusOne, setPlusOne] = useState("");
-  const [attending, setAttending] = useState("დიახ, ვიქნები");
+  const [status, setStatus] = useState<"attending" | "declined">("attending");
+  const [count, setCount] = useState(1);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const showPlusOne = attending.includes("+1");
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -410,23 +411,12 @@ function RsvpForm({ onSent }: { onSent: () => void }) {
     setBusy(true);
     setError(null);
     try {
-      const response = await fetch(
-        "https://script.google.com/macros/s/AKfycbxbq6yt_r-nc6lvO-35pmz43ODfChWrw-wtgLcdqBLC_WkssjKopZmcTp1C_yMbgdfQ/exec",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: fullName,
-            status: attending.includes("ვერ") ? "ვერ მოვალ" : "მოვალ",
-            count: attending.includes("ვერ") ? 0 : attending.includes("+1") ? 2 : 1,
-            timestamp: new Date().toISOString(),
-          }),
-        },
-      );
-      const data = await response.json().catch(() => ({ result: "error" }));
-      if (!response.ok || data.result === "error") {
-        throw new Error(data.message || "Submission failed");
-      }
+      const { error: insertError } = await supabase.from("rsvp_responses").insert({
+        name: fullName,
+        status,
+        count: status === "declined" ? 0 : count,
+      });
+      if (insertError) throw insertError;
       onSent();
     } catch {
       setError("ვერ გაიგზავნა, სცადეთ ხელახლა");
@@ -459,32 +449,34 @@ function RsvpForm({ onSent }: { onSent: () => void }) {
         <select
           id="attending"
           name="attending"
-          value={attending}
-          onChange={(e) => setAttending(e.target.value)}
+          value={status}
+          onChange={(e) => setStatus(e.target.value as "attending" | "declined")}
           className="mt-1 w-full rounded-lg border border-ink/15 bg-parchment px-4 py-3 font-geo text-sm text-ink outline-none focus:border-wine"
         >
-          <option>დიახ, ვიქნები</option>
-          <option>დიახ, +1-თან ერთად</option>
-          <option>სამწუხაროდ, ვერ შევძლებ</option>
+          <option value="attending">მოვალ</option>
+          <option value="declined">ვერ მოვალ</option>
         </select>
       </div>
 
-      {showPlusOne && (
+      {status === "attending" && (
         <div className="animate-fade-in">
-          <label htmlFor="plusOneName" className="font-geo text-xs tracking-[0.2em] text-ink/60">
-            +1 სახელი და გვარი
+          <label htmlFor="count" className="font-geo text-xs tracking-[0.2em] text-ink/60">
+            სტუმრების რაოდენობა
           </label>
           <input
-            id="plusOneName"
-            name="plusOneName"
+            id="count"
+            name="count"
+            type="number"
+            min={1}
+            max={20}
             required
-            maxLength={120}
-            value={plusOne}
-            onChange={(e) => setPlusOne(e.target.value)}
+            value={count}
+            onChange={(e) => setCount(Math.max(1, Math.min(20, Number(e.target.value) || 1)))}
             className="mt-1 w-full rounded-lg border border-ink/15 bg-parchment px-4 py-3 font-geo text-sm text-ink outline-none focus:border-wine"
           />
         </div>
       )}
+
 
       {error && <p className="font-geo text-xs text-wine">{error}</p>}
 

@@ -22,11 +22,12 @@ function matches(input: string, expected: string) {
 
 export type RsvpRow = {
   id: string;
-  full_name: string;
-  attending: boolean;
-  plus_one_name: string | null;
+  name: string;
+  status: string;
+  count: number;
   created_at: string;
 };
+
 
 export const unlockAdmin = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ password: z.string().max(200) }).parse(input))
@@ -51,10 +52,11 @@ export const getRsvps = createServerFn({ method: "POST" }).handler(async () => {
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data, error } = await supabaseAdmin
-    .from("rsvps")
-    .select("id, full_name, attending, plus_one_name, created_at")
+    .from("rsvp_responses")
+    .select("id, name, status, count, created_at")
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
+
 
   return { locked: false as const, rows: (data ?? []) as RsvpRow[] };
 });

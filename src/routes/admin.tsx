@@ -78,17 +78,17 @@ function Admin() {
   }
 
   const exportToExcel = () => {
-    let csvContent = "\uFEFFკატეგორია,სახელი / ავტორი,სტატუსი / მილოცვა, +1 პერსონა, თარიღი\n";
+    let csvContent = "\uFEFFკატეგორია,სახელი / ავტორი,სტატუსი / მილოცვა,სტუმრები,თარიღი\n";
 
     if (rows) {
       rows.forEach((r) => {
-        const category = r.attending ? "მოდის" : "ვერ მოდის";
-        const name = `"${(r.full_name || "").replace(/"/g, '""')}"`;
-        const status = r.attending ? "დიახ" : "არა";
-        const plusOne = `"${(r.plus_one_name || "-").replace(/"/g, '""')}"`;
+        const attending = r.status === "attending";
+        const category = attending ? "მოდის" : "ვერ მოდის";
+        const name = `"${(r.name || "").replace(/"/g, '""')}"`;
+        const status = attending ? "დიახ" : "არა";
         const date = `"${new Date(r.created_at).toLocaleDateString("ka-GE")}"`;
 
-        csvContent += `"${category}",${name},${status},${plusOne},${date}\n`;
+        csvContent += `"${category}",${name},${status},${r.count},${date}\n`;
       });
     }
 
@@ -105,11 +105,12 @@ function Admin() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `Tekla_Zauri_Guests_Wishes_${new Date().toISOString().split("T")[0]}.csv`);
+    link.setAttribute("download", `Guests_Wishes_${new Date().toISOString().split("T")[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
+
 
   if (rows === null) {
     return (
@@ -146,10 +147,10 @@ function Admin() {
     );
   }
 
-  const yes = rows.filter((r) => r.attending);
-  const no = rows.filter((r) => !r.attending);
-  const plusOnes = yes.filter((r) => r.plus_one_name && r.plus_one_name.trim().length > 0);
-  const totalGuests = yes.length + plusOnes.length;
+  const yes = rows.filter((r) => r.status === "attending");
+  const no = rows.filter((r) => r.status !== "attending");
+  const totalGuests = yes.reduce((sum, r) => sum + (r.count || 0), 0);
+
 
   return (
     <main className="min-h-screen bg-backdrop px-4 py-10 sm:px-6 sm:py-14">
@@ -192,9 +193,10 @@ function Admin() {
         <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
           <Stat label="სულ სტუმარი" value={totalGuests} />
           <Stat label="მოდის" value={yes.length} />
-          <Stat label="+1" value={plusOnes.length} />
+          <Stat label="ვერ მოდის" value={no.length} />
           <Stat label="სურვილები" value={wishes.length} />
         </div>
+
 
         <Table title="მოდის" rows={yes} />
         <Table title="ვერ მოდის" rows={no} />
@@ -232,7 +234,8 @@ function Table({ title, rows }: { title: string; rows: RsvpRow[] }) {
             <thead>
               <tr className="border-b border-ink/10 text-[0.65rem] tracking-[0.2em] text-ink/50">
                 <th className="px-5 py-3">სახელი და გვარი</th>
-                <th className="px-5 py-3">+1</th>
+                <th className="px-5 py-3">სტატუსი</th>
+                <th className="px-5 py-3">სტუმრები</th>
                 <th className="px-5 py-3">თარიღი</th>
               </tr>
             </thead>
@@ -242,11 +245,15 @@ function Table({ title, rows }: { title: string; rows: RsvpRow[] }) {
                   key={r.id}
                   className="border-b border-ink/5 transition last:border-0 odd:bg-ink/[0.015] hover:bg-wine/5"
                 >
-                  <td className="px-5 py-3.5 font-medium text-ink">{r.full_name}</td>
-                  <td className="px-5 py-3 text-ink/70">{r.plus_one_name || "—"}</td>
+                  <td className="px-5 py-3.5 font-medium text-ink">{r.name}</td>
+                  <td className="px-5 py-3 text-ink/70">
+                    {r.status === "attending" ? "მოდის" : "ვერ მოდის"}
+                  </td>
+                  <td className="px-5 py-3 text-ink/70">{r.count}</td>
                   <td className="px-5 py-3 text-ink/50">
                     {new Date(r.created_at).toLocaleDateString("ka-GE")}
                   </td>
+
                 </tr>
               ))}
             </tbody>

@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      rsvp_responses: {
+        Row: {
+          count: number
+          created_at: string
+          id: string
+          name: string
+          status: string
+        }
+        Insert: {
+          count?: number
+          created_at?: string
+          id?: string
+          name: string
+          status: string
+        }
+        Update: {
+          count?: number
+          created_at?: string
+          id?: string
+          name?: string
+          status?: string
+        }
+        Relationships: []
+      }
       rsvps: {
         Row: {
           attending: boolean

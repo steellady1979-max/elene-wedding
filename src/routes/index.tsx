@@ -6,6 +6,7 @@ import { Typewriter } from "@/components/Typewriter";
 import { Schedule } from "@/components/Schedule";
 import { Guestbook } from "@/components/Guestbook";
 import MusicPlayer from "@/components/MusicPlayer";
+import { FloralCorner } from "@/components/FloralCorner";
 import { Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -14,29 +15,6 @@ const bowImg = "/images/bow.png";
 const archImg = "/images/arch.jpg";
 const envelopeImg = "/images/envelope-olive.png";
 const coupleImg = "/images/couple.jpg";
-const floralImg = "/images/floral-corner.png";
-
-function FloralCorner({
-  className,
-  flip = false,
-}: {
-  className?: string;
-  flip?: boolean;
-}) {
-  return (
-    <img
-      src={floralImg}
-      alt=""
-      aria-hidden="true"
-      loading="lazy"
-      width={1024}
-      height={1024}
-      className={`pointer-events-none absolute select-none opacity-90 ${
-        flip ? "-scale-x-100" : ""
-      } ${className ?? ""}`}
-    />
-  );
-}
 
 const WEDDING_DATE = new Date("2026-10-15T16:00:00+04:00");
 

@@ -1,27 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { useSession } from "@tanstack/react-start/server";
 import { createHash, timingSafeEqual } from "node:crypto";
 import { z } from "zod";
-
-type AdminSession = { unlocked?: boolean };
-
-function sessionConfig() {
-  const envSecret = process.env["SESSION_SECRET"];
-  return {
-    password:
-      envSecret && envSecret.length >= 32
-        ? envSecret
-        : "mariam-lasha-wedding-session-secret-key-2026-0123456789abcdef",
-    name: "wedding-admin",
-    maxAge: 60 * 60 * 12,
-    cookie: {
-      httpOnly: true,
-      secure: process.env["NODE_ENV"] === "production",
-      sameSite: "lax" as const,
-      path: "/",
-    },
-  };
-}
 
 function matches(input: string, expected: string) {
   const a = createHash("sha256").update(input.trim(), "utf8").digest();
@@ -44,33 +23,42 @@ export type RsvpRow = {
   created_at: string;
 };
 
+export type WishRow = {
+  id: string;
+  full_name: string;
+  message: string;
+  created_at: string;
+};
+
+const passwordInput = (input: unknown) => z.object({ password: z.string().max(200) }).parse(input);
 
 export const unlockAdmin = createServerFn({ method: "POST" })
-  .inputValidator((input) => z.object({ password: z.string().max(200) }).parse(input))
+  .inputValidator(passwordInput)
+  .handler(async ({ data }) => ({ ok: isValidPassword(data.password) }));
+
+export const getRsvps = createServerFn({ method: "POST" })
+  .inputValidator(passwordInput)
   .handler(async ({ data }) => {
-    if (!isValidPassword(data.password)) return { ok: false as const };
-    const session = await useSession<AdminSession>(sessionConfig());
-    await session.update({ unlocked: true });
-    return { ok: true as const };
+    if (!isValidPassword(data.password)) return { locked: true as const };
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const [rsvps, wishes] = await Promise.all([
+      supabaseAdmin
+        .from("rsvp_responses")
+        .select("id, name, status, count, created_at")
+        .order("created_at", { ascending: false }),
+      supabaseAdmin
+        .from("wishes")
+        .select("id, full_name, message, created_at")
+        .order("created_at", { ascending: false }),
+    ]);
+
+    if (rsvps.error) throw new Error(rsvps.error.message);
+
+    return {
+      locked: false as const,
+      rows: (rsvps.data ?? []) as RsvpRow[],
+      wishes: (wishes.data ?? []) as WishRow[],
+    };
   });
-
-export const lockAdmin = createServerFn({ method: "POST" }).handler(async () => {
-  const session = await useSession<AdminSession>(sessionConfig());
-  await session.clear();
-  return { ok: true as const };
-});
-
-export const getRsvps = createServerFn({ method: "POST" }).handler(async () => {
-  const session = await useSession<AdminSession>(sessionConfig());
-  if (!session.data.unlocked) return { locked: true as const };
-
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data, error } = await supabaseAdmin
-    .from("rsvp_responses")
-    .select("id, name, status, count, created_at")
-    .order("created_at", { ascending: false });
-  if (error) throw new Error(error.message);
-
-
-  return { locked: false as const, rows: (data ?? []) as RsvpRow[] };
-});

@@ -6,11 +6,20 @@ import { z } from "zod";
 type AdminSession = { unlocked?: boolean };
 
 function sessionConfig() {
+  const envSecret = process.env["SESSION_SECRET"];
   return {
-    password: process.env["SESSION_SECRET"] || "mariam-lasha-wedding-session-secret-key-2026-0123456789abcdef",
+    password:
+      envSecret && envSecret.length >= 32
+        ? envSecret
+        : "mariam-lasha-wedding-session-secret-key-2026-0123456789abcdef",
     name: "wedding-admin",
     maxAge: 60 * 60 * 12,
-    cookie: { httpOnly: true, secure: true, sameSite: "lax" as const, path: "/" },
+    cookie: {
+      httpOnly: true,
+      secure: process.env["NODE_ENV"] === "production",
+      sameSite: "lax" as const,
+      path: "/",
+    },
   };
 }
 

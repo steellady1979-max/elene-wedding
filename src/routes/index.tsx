@@ -14,6 +14,29 @@ const bowImg = "/images/bow.png";
 const archImg = "/images/arch.jpg";
 const envelopeImg = "/images/envelope-olive.png";
 const coupleImg = "/images/couple.jpg";
+const floralImg = "/images/floral-corner.png";
+
+function FloralCorner({
+  className,
+  flip = false,
+}: {
+  className?: string;
+  flip?: boolean;
+}) {
+  return (
+    <img
+      src={floralImg}
+      alt=""
+      aria-hidden="true"
+      loading="lazy"
+      width={1024}
+      height={1024}
+      className={`pointer-events-none absolute select-none opacity-90 ${
+        flip ? "-scale-x-100" : ""
+      } ${className ?? ""}`}
+    />
+  );
+}
 
 const WEDDING_DATE = new Date("2026-10-15T16:00:00+04:00");
 
@@ -179,7 +202,9 @@ function Countdown() {
 function EnvelopeSection() {
   const [opened, setOpened] = useState(false);
   return (
-    <section className="flex flex-col items-center overflow-hidden bg-parchment px-6 pb-24 pt-24">
+    <section className="relative flex flex-col items-center overflow-hidden bg-parchment px-6 pb-24 pt-24">
+      <FloralCorner className="left-[-14%] top-2 w-[46%] max-w-[16rem]" />
+      <FloralCorner className="right-[-14%] top-2 w-[46%] max-w-[16rem]" flip />
       <p className="mb-8 font-geo text-xs tracking-[0.35em] text-ink/55">
         {opened ? "ჩვენი სიტყვები" : "შეეხე კონვერტს"}
       </p>
@@ -331,7 +356,12 @@ function Details() {
 function Rsvp() {
   const [sent, setSent] = useState(false);
   return (
-    <section className="bg-parchment px-6 py-20">
+    <section className="relative overflow-hidden bg-parchment px-6 py-20">
+      <FloralCorner className="bottom-[-6%] left-[-16%] w-[44%] max-w-[15rem] rotate-180 opacity-70" />
+      <FloralCorner
+        className="bottom-[-6%] right-[-16%] w-[44%] max-w-[15rem] rotate-180 opacity-70"
+        flip
+      />
       <div className="mx-auto max-w-xl text-center">
         <Reveal>
           <SparkleTitle className="font-geo text-2xl">დასტურის ფორმა</SparkleTitle>

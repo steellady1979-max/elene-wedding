@@ -7,6 +7,8 @@ import { Schedule } from "@/components/Schedule";
 import { Guestbook } from "@/components/Guestbook";
 import MusicPlayer from "@/components/MusicPlayer";
 import { FloralCorner } from "@/components/FloralCorner";
+import { supabase } from "@/integrations/supabase/client";
+
 
 
 const panelImg = "/images/panel.jpg";

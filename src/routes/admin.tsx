@@ -21,17 +21,8 @@ export const Route = createFileRoute("/admin")({
   component: Admin,
 });
 
-type WishRow = {
-  id: string;
-  full_name: string;
-  message: string;
-  created_at: string;
-};
-
 function Admin() {
   const load = useServerFn(getRsvps);
-  const unlock = useServerFn(unlockAdmin);
-  const lock = useServerFn(lockAdmin);
 
   const [rows, setRows] = useState<RsvpRow[] | null>(null);
   const [wishes, setWishes] = useState<WishRow[]>([]);
@@ -39,26 +30,35 @@ function Admin() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const refresh = useCallback(async () => {
-    setBusy(true);
-    try {
-      const res = await load({ data: undefined });
-      setRows(res.locked ? null : res.rows);
-
-      if (!res.locked) {
-        const { data: wishesData } = await supabase
-          .from("wishes")
-          .select("id, full_name, message, created_at")
-          .order("created_at", { ascending: false });
-        
-        if (wishesData) {
-          setWishes(wishesData);
-        }
+  const refresh = useCallback(
+    async (pw?: string) => {
+      const key =
+        pw ?? (typeof window !== "undefined" ? sessionStorage.getItem(PW_KEY) || "" : "");
+      if (!key) {
+        setRows(null);
+        return false;
       }
-    } finally {
-      setBusy(false);
-    }
-  }, [load]);
+      setBusy(true);
+      try {
+        const res = await load({ data: { password: key } });
+        if (res.locked) {
+          setRows(null);
+          if (typeof window !== "undefined") sessionStorage.removeItem(PW_KEY);
+          return false;
+        }
+        if (typeof window !== "undefined") sessionStorage.setItem(PW_KEY, key);
+        setRows(res.rows);
+        setWishes(res.wishes);
+        return true;
+      } catch {
+        setError("მონაცემების ჩატვირთვა ვერ მოხერხდა");
+        return false;
+      } finally {
+        setBusy(false);
+      }
+    },
+    [load],
+  );
 
   useEffect(() => {
     void refresh();
@@ -67,15 +67,12 @@ function Admin() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setBusy(true);
-    const res = await unlock({ data: { password } });
-    setBusy(false);
-    if (!res.ok) {
+    const ok = await refresh(password);
+    if (!ok) {
       setError("პაროლი არასწორია");
       return;
     }
     setPassword("");
-    void refresh();
   }
 
   const exportToExcel = () => {

@@ -302,12 +302,8 @@ const DRESS = [
 function Details() {
   return (
     <section className="relative overflow-hidden bg-backdrop px-6 py-20">
-      <FloralCorner className="left-[-15%] top-[-4%] w-[42%] max-w-[14rem] opacity-80" />
-      <FloralCorner
-        className="bottom-[-6%] right-[-15%] w-[42%] max-w-[14rem] rotate-180 opacity-70"
-        flip
-      />
-      <div className="mx-auto grid max-w-3xl gap-6">
+      <div className="relative z-10 mx-auto grid max-w-3xl gap-6">
+
         <Reveal>
           <Card title="დრესკოდი">
             <ul className="grid gap-4">

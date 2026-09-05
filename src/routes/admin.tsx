@@ -176,9 +176,10 @@ function Admin() {
               განახლება
             </button>
             <button
-              onClick={async () => {
-                await lock({ data: undefined });
+              onClick={() => {
+                sessionStorage.removeItem(PW_KEY);
                 setRows(null);
+                setWishes([]);
               }}
               className="inline-flex items-center gap-2 rounded-full border border-ink/20 px-4 py-2 font-geo text-xs tracking-[0.15em] text-ink/70 transition hover:bg-ink/5"
             >

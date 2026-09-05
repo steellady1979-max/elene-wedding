@@ -2,13 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useState } from "react";
 import { Lock, LogOut, RefreshCw } from "lucide-react";
-import { getRsvps, lockAdmin, unlockAdmin, type RsvpRow } from "@/lib/admin.functions";
-import { supabase } from "@/integrations/supabase/client";
+import { getRsvps, type RsvpRow, type WishRow } from "@/lib/admin.functions";
+
+const PW_KEY = "wedding-admin-pw";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "ადმინი — თეკლა & ზაური RSVP & სურვილები" },
+      { title: "ადმინი — ლაშა & მარიამი RSVP & სურვილები" },
       { name: "description", content: "დახურული გვერდი ქორწილის მონაცემების სანახავად." },
       { name: "robots", content: "noindex, nofollow" },
       { property: "og:title", content: "ადმინი — RSVP & სურვილები" },
@@ -20,17 +21,8 @@ export const Route = createFileRoute("/admin")({
   component: Admin,
 });
 
-type WishRow = {
-  id: string;
-  full_name: string;
-  message: string;
-  created_at: string;
-};
-
 function Admin() {
   const load = useServerFn(getRsvps);
-  const unlock = useServerFn(unlockAdmin);
-  const lock = useServerFn(lockAdmin);
 
   const [rows, setRows] = useState<RsvpRow[] | null>(null);
   const [wishes, setWishes] = useState<WishRow[]>([]);
@@ -38,26 +30,35 @@ function Admin() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const refresh = useCallback(async () => {
-    setBusy(true);
-    try {
-      const res = await load({ data: undefined });
-      setRows(res.locked ? null : res.rows);
-
-      if (!res.locked) {
-        const { data: wishesData } = await supabase
-          .from("wishes")
-          .select("id, full_name, message, created_at")
-          .order("created_at", { ascending: false });
-        
-        if (wishesData) {
-          setWishes(wishesData);
-        }
+  const refresh = useCallback(
+    async (pw?: string) => {
+      const key =
+        pw ?? (typeof window !== "undefined" ? sessionStorage.getItem(PW_KEY) || "" : "");
+      if (!key) {
+        setRows(null);
+        return false;
       }
-    } finally {
-      setBusy(false);
-    }
-  }, [load]);
+      setBusy(true);
+      try {
+        const res = await load({ data: { password: key } });
+        if (res.locked) {
+          setRows(null);
+          if (typeof window !== "undefined") sessionStorage.removeItem(PW_KEY);
+          return false;
+        }
+        if (typeof window !== "undefined") sessionStorage.setItem(PW_KEY, key);
+        setRows(res.rows);
+        setWishes(res.wishes);
+        return true;
+      } catch {
+        setError("მონაცემების ჩატვირთვა ვერ მოხერხდა");
+        return false;
+      } finally {
+        setBusy(false);
+      }
+    },
+    [load],
+  );
 
   useEffect(() => {
     void refresh();
@@ -66,15 +67,12 @@ function Admin() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setBusy(true);
-    const res = await unlock({ data: { password } });
-    setBusy(false);
-    if (!res.ok) {
+    const ok = await refresh(password);
+    if (!ok) {
       setError("პაროლი არასწორია");
       return;
     }
     setPassword("");
-    void refresh();
   }
 
   const exportToExcel = () => {
@@ -178,9 +176,10 @@ function Admin() {
               განახლება
             </button>
             <button
-              onClick={async () => {
-                await lock({ data: undefined });
+              onClick={() => {
+                sessionStorage.removeItem(PW_KEY);
                 setRows(null);
+                setWishes([]);
               }}
               className="inline-flex items-center gap-2 rounded-full border border-ink/20 px-4 py-2 font-geo text-xs tracking-[0.15em] text-ink/70 transition hover:bg-ink/5"
             >

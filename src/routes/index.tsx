@@ -308,20 +308,16 @@ function Details() {
         <Reveal>
           <Card title="დრესკოდი">
             <ul className="grid gap-4">
-              {DRESS.map(({ icon: Icon, label, text }) => (
-                <li key={label} className="flex gap-3">
-                  <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-wine/20 bg-wine/10">
-                    <Icon className="h-4 w-4 text-wine" strokeWidth={1.5} />
+              {DRESS.map(({ label, text }) => (
+                <li key={label}>
+                  <span className="block font-geo text-xs tracking-[0.2em] text-ink/55">
+                    {label}
                   </span>
-                  <span>
-                    <span className="block font-geo text-xs tracking-[0.2em] text-ink/55">
-                      {label}
-                    </span>
-                    <span className="text-ink/80">{text}</span>
-                  </span>
+                  <span className="text-ink/80">{text}</span>
                 </li>
               ))}
             </ul>
+
           </Card>
         </Reveal>
 

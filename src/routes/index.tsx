@@ -333,13 +333,8 @@ function Rsvp() {
   const [sent, setSent] = useState(false);
   return (
     <section className="relative overflow-hidden bg-parchment px-6 py-20">
-      <FloralCorner className="bottom-[-6%] left-[-16%] w-[44%] max-w-[15rem] rotate-180" />
-      <FloralCorner
-        className="bottom-[-6%] right-[-16%] w-[44%] max-w-[15rem] rotate-180"
-        flip
-        level="medium"
-      />
       <div className="relative z-10 mx-auto max-w-xl text-center">
+
         <Reveal>
           <SparkleTitle className="font-geo text-2xl">დასტურის ფორმა</SparkleTitle>
         </Reveal>

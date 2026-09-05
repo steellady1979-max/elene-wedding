@@ -40,25 +40,28 @@ export type Database = {
       }
       rsvps: {
         Row: {
-          attending: boolean
           created_at: string
           full_name: string
+          guest_count: number
           id: string
-          plus_one_name: string | null
+          status: string
+          wishes: string | null
         }
         Insert: {
-          attending: boolean
           created_at?: string
           full_name: string
+          guest_count?: number
           id?: string
-          plus_one_name?: string | null
+          status: string
+          wishes?: string | null
         }
         Update: {
-          attending?: boolean
           created_at?: string
           full_name?: string
+          guest_count?: number
           id?: string
-          plus_one_name?: string | null
+          status?: string
+          wishes?: string | null
         }
         Relationships: []
       }

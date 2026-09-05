@@ -2,8 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useState } from "react";
 import { Lock, LogOut, RefreshCw } from "lucide-react";
-import { getRsvps, lockAdmin, unlockAdmin, type RsvpRow } from "@/lib/admin.functions";
-import { supabase } from "@/integrations/supabase/client";
+import { getRsvps, type RsvpRow, type WishRow } from "@/lib/admin.functions";
+
+const PW_KEY = "wedding-admin-pw";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({

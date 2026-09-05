@@ -217,21 +217,21 @@ function EnvelopeSection() {
             {opened ? (
               <div className="font-geo text-[0.9rem] leading-[1.95] text-ink/85">
                 <Typewriter
-                  text="ძვირფასო სტუმრებო,"
-                  speed={55}
+                  text="სიხარულით გიწვევთ ჩვენი ცხოვრების ერთ-ერთი ყველაზე მნიშვნელოვანი დღის გასაზიარებლად."
+                  speed={30}
                   startDelay={900}
                   className="font-geo text-[0.9rem] leading-[1.95] text-ink/85"
                 />
                 <Typewriter
-                  text="გეპატიჟებით ჩვენი სიყვარულის დღეზე — ყველაზე მნიშვნელოვან დასაწყისზე. დიდი სიხარულია, რომ ეს დღე თქვენთან ერთად გავიზიაროთ და გპირდებით ულამაზეს მოგონებებს, სითბოს და უსაზღვრო სიხარულს."
+                  text="გვინდა, ჩვენი ბედნიერების ეს განსაკუთრებული დღე თქვენთან ერთად გავატაროთ და ერთად შევქმნათ ლამაზი მოგონებები, რომლებიც დიდხანს გაგვყვება."
                   speed={28}
-                  startDelay={2000}
+                  startDelay={3800}
                   className="mt-2 font-geo text-[0.9rem] leading-[1.95] text-ink/85"
                 />
                 <Typewriter
-                  text="გელოდებით — ლაშა & მარიამი"
+                  text="ლაშა & მარიამი"
                   speed={55}
-                  startDelay={7800}
+                  startDelay={9000}
                   className="mt-4 font-geo text-[0.9rem] text-ink/70"
                 />
               </div>
@@ -397,7 +397,6 @@ function CoupleImage() {
 function RsvpForm({ onSent }: { onSent: () => void }) {
   const [name, setName] = useState("");
   const [status, setStatus] = useState<"attending" | "declined">("attending");
-  const [count, setCount] = useState(1);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -414,7 +413,7 @@ function RsvpForm({ onSent }: { onSent: () => void }) {
       const { error: insertError } = await supabase.from("rsvp_responses").insert({
         name: fullName,
         status,
-        count: status === "declined" ? 0 : count,
+        count: status === "declined" ? 0 : 1,
       });
       if (insertError) throw insertError;
       onSent();
@@ -453,29 +452,11 @@ function RsvpForm({ onSent }: { onSent: () => void }) {
           onChange={(e) => setStatus(e.target.value as "attending" | "declined")}
           className="mt-1 w-full rounded-lg border border-ink/15 bg-parchment px-4 py-3 font-geo text-sm text-ink outline-none focus:border-wine"
         >
-          <option value="attending">მოვალ</option>
-          <option value="declined">ვერ მოვალ</option>
+          <option value="attending">დიახ</option>
+          <option value="declined">არა</option>
         </select>
       </div>
 
-      {status === "attending" && (
-        <div className="animate-fade-in">
-          <label htmlFor="count" className="font-geo text-xs tracking-[0.2em] text-ink/60">
-            სტუმრების რაოდენობა
-          </label>
-          <input
-            id="count"
-            name="count"
-            type="number"
-            min={1}
-            max={20}
-            required
-            value={count}
-            onChange={(e) => setCount(Math.max(1, Math.min(20, Number(e.target.value) || 1)))}
-            className="mt-1 w-full rounded-lg border border-ink/15 bg-parchment px-4 py-3 font-geo text-sm text-ink outline-none focus:border-wine"
-          />
-        </div>
-      )}
 
 
       {error && <p className="font-geo text-xs text-wine">{error}</p>}

@@ -4,7 +4,7 @@ export type FloralDensity = "min" | "medium" | "max";
  * ვარდების რაოდენობა/ინტენსივობა მთელ ლენდინგზე.
  * შეცვალე ერთი მნიშვნელობა: "min" | "medium" | "max"
  */
-export const FLORAL_DENSITY: FloralDensity = "medium";
+export const FLORAL_DENSITY: FloralDensity = "max";
 
 const ORDER: Record<FloralDensity, number> = { min: 1, medium: 2, max: 3 };
 
@@ -15,7 +15,7 @@ export function floralVisible(level: FloralDensity = "min") {
 
 /** გამჭვირვალობა ინტენსივობის მიხედვით (ტექსტი არასდროს იფარება) */
 export const FLORAL_OPACITY: Record<FloralDensity, number> = {
-  min: 0.45,
-  medium: 0.65,
-  max: 0.85,
+  min: 0.6,
+  medium: 0.8,
+  max: 0.95,
 };

@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "ადმინი — თეკლა & ზაური RSVP & სურვილები" },
+      { title: "ადმინი — ლაშა & მარიამი RSVP & სურვილები" },
       { name: "description", content: "დახურული გვერდი ქორწილის მონაცემების სანახავად." },
       { name: "robots", content: "noindex, nofollow" },
       { property: "og:title", content: "ადმინი — RSVP & სურვილები" },

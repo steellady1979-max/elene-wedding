@@ -234,7 +234,8 @@ function Table({ title, rows }: { title: string; rows: RsvpRow[] }) {
             <thead>
               <tr className="border-b border-ink/10 text-[0.65rem] tracking-[0.2em] text-ink/50">
                 <th className="px-5 py-3">სახელი და გვარი</th>
-                <th className="px-5 py-3">+1</th>
+                <th className="px-5 py-3">სტატუსი</th>
+                <th className="px-5 py-3">სტუმრები</th>
                 <th className="px-5 py-3">თარიღი</th>
               </tr>
             </thead>
@@ -244,11 +245,15 @@ function Table({ title, rows }: { title: string; rows: RsvpRow[] }) {
                   key={r.id}
                   className="border-b border-ink/5 transition last:border-0 odd:bg-ink/[0.015] hover:bg-wine/5"
                 >
-                  <td className="px-5 py-3.5 font-medium text-ink">{r.full_name}</td>
-                  <td className="px-5 py-3 text-ink/70">{r.plus_one_name || "—"}</td>
+                  <td className="px-5 py-3.5 font-medium text-ink">{r.name}</td>
+                  <td className="px-5 py-3 text-ink/70">
+                    {r.status === "attending" ? "მოდის" : "ვერ მოდის"}
+                  </td>
+                  <td className="px-5 py-3 text-ink/70">{r.count}</td>
                   <td className="px-5 py-3 text-ink/50">
                     {new Date(r.created_at).toLocaleDateString("ka-GE")}
                   </td>
+
                 </tr>
               ))}
             </tbody>

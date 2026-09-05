@@ -180,8 +180,8 @@ function EnvelopeSection() {
   const [opened, setOpened] = useState(false);
   return (
     <section className="relative flex flex-col items-center overflow-hidden bg-parchment px-6 pb-24 pt-24">
-      <FloralCorner className="left-[-14%] top-2 w-[46%] max-w-[16rem]" />
-      <FloralCorner className="right-[-14%] top-2 w-[46%] max-w-[16rem]" flip level="medium" />
+      <FloralCorner className="left-0 top-0 w-[36%] max-w-[10rem] sm:left-[-8%] sm:top-2 sm:w-[46%] sm:max-w-[16rem]" />
+      <FloralCorner className="right-0 top-0 w-[36%] max-w-[10rem] sm:right-[-8%] sm:top-2 sm:w-[46%] sm:max-w-[16rem]" flip level="medium" />
       <p className="relative z-10 mb-8 font-geo text-xs tracking-[0.35em] text-ink/55">
         {opened ? "ჩვენი სიტყვები" : "შეეხე კონვერტს"}
       </p>

@@ -7,7 +7,7 @@ import { Schedule } from "@/components/Schedule";
 import { Guestbook } from "@/components/Guestbook";
 import MusicPlayer from "@/components/MusicPlayer";
 import { FloralCorner } from "@/components/FloralCorner";
-import { supabase } from "@/integrations/supabase/client";
+
 
 const panelImg = "/images/panel.jpg";
 const bowImg = "/images/bow.png";
@@ -362,7 +362,7 @@ function Rsvp() {
 
         {sent ? (
           <p className="mt-10 font-geo text-lg text-ink">
-            გმადლობთ! თქვენი პასუხი მიღებულია — მალე დაგიკავშირდებით.
+            მადლობა! თქვენი პასუხი წარმატებით გაიგზავნა ✨
           </p>
         ) : (
           <RsvpForm onSent={() => setSent(true)} />
@@ -409,17 +409,30 @@ function RsvpForm({ onSent }: { onSent: () => void }) {
     }
     setBusy(true);
     setError(null);
-    const { error: dbError } = await supabase.from("rsvps").insert({
-      full_name: fullName,
-      attending: !attending.includes("ვერ"),
-      plus_one_name: showPlusOne ? plusOne.trim().slice(0, 120) || null : null,
-    });
-    setBusy(false);
-    if (dbError) {
+    try {
+      const response = await fetch(
+        "https://script.google.com/macros/s/AKfycbxbq6yt_r-nc6lvO-35pmz43ODfChWrw-wtgLcdqBLC_WkssjKopZmcTp1C_yMbgdfQ/exec",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: fullName,
+            status: attending.includes("ვერ") ? "ვერ მოვალ" : "მოვალ",
+            count: attending.includes("ვერ") ? 0 : attending.includes("+1") ? 2 : 1,
+            timestamp: new Date().toISOString(),
+          }),
+        },
+      );
+      const data = await response.json().catch(() => ({ result: "error" }));
+      if (!response.ok || data.result === "error") {
+        throw new Error(data.message || "Submission failed");
+      }
+      onSent();
+    } catch {
       setError("ვერ გაიგზავნა, სცადეთ ხელახლა");
-      return;
+    } finally {
+      setBusy(false);
     }
-    onSent();
   }
 
   return (

@@ -7,7 +7,6 @@ import { Schedule } from "@/components/Schedule";
 import { Guestbook } from "@/components/Guestbook";
 import MusicPlayer from "@/components/MusicPlayer";
 import { FloralCorner } from "@/components/FloralCorner";
-import { Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const panelImg = "/images/panel.jpg";
@@ -296,7 +295,7 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
 }
 
 const DRESS = [
-  { icon: Sparkles, label: "სტილი", text: "სადა და ელეგანტური." },
+  { label: "სტილი", text: "სადა და ელეგანტური." },
 ];
 
 
@@ -308,20 +307,16 @@ function Details() {
         <Reveal>
           <Card title="დრესკოდი">
             <ul className="grid gap-4">
-              {DRESS.map(({ icon: Icon, label, text }) => (
-                <li key={label} className="flex gap-3">
-                  <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-wine/20 bg-wine/10">
-                    <Icon className="h-4 w-4 text-wine" strokeWidth={1.5} />
+              {DRESS.map(({ label, text }) => (
+                <li key={label}>
+                  <span className="block font-geo text-xs tracking-[0.2em] text-ink/55">
+                    {label}
                   </span>
-                  <span>
-                    <span className="block font-geo text-xs tracking-[0.2em] text-ink/55">
-                      {label}
-                    </span>
-                    <span className="text-ink/80">{text}</span>
-                  </span>
+                  <span className="text-ink/80">{text}</span>
                 </li>
               ))}
             </ul>
+
           </Card>
         </Reveal>
 
@@ -337,13 +332,8 @@ function Rsvp() {
   const [sent, setSent] = useState(false);
   return (
     <section className="relative overflow-hidden bg-parchment px-6 py-20">
-      <FloralCorner className="bottom-[-6%] left-[-16%] w-[44%] max-w-[15rem] rotate-180" />
-      <FloralCorner
-        className="bottom-[-6%] right-[-16%] w-[44%] max-w-[15rem] rotate-180"
-        flip
-        level="medium"
-      />
       <div className="relative z-10 mx-auto max-w-xl text-center">
+
         <Reveal>
           <SparkleTitle className="font-geo text-2xl">დასტურის ფორმა</SparkleTitle>
         </Reveal>

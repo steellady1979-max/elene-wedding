@@ -5,7 +5,7 @@ import {
   type FloralDensity,
 } from "@/config/floral";
 
-const floralImg = "/images/floral-corner.png";
+const floralImg = "/images/floral-corner.webp";
 
 export function FloralCorner({
   className,

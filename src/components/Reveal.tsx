@@ -7,6 +7,10 @@ export function useInView<T extends HTMLElement>(threshold = 0.25) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setInView(true);
+      return;
+    }
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
@@ -16,7 +20,7 @@ export function useInView<T extends HTMLElement>(threshold = 0.25) {
           }
         }
       },
-      { threshold },
+      { threshold: 0, rootMargin: "0px 0px 80px 0px" },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -39,8 +43,8 @@ export function Reveal({
     <div
       ref={ref}
       style={{ transitionDelay: `${delay}ms` }}
-      className={`transition-all duration-[1400ms] ease-out ${
-        inView ? "translate-y-0 opacity-100 blur-0" : "translate-y-6 opacity-0 blur-[3px]"
+      className={`reveal transition-[opacity,transform] duration-700 ease-out ${
+        inView ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
       } ${className}`}
     >
       {children}

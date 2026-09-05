@@ -95,8 +95,8 @@ export function Guestbook() {
   );
 
   useEffect(() => {
-    if (paused || writing || total < 2 || flip) return;
-    const id = setInterval(() => turn(1), 6000);
+    if (paused || writing || total < 2 || flip || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = setInterval(() => { if (!document.hidden) turn(1); }, 6000);
     return () => clearInterval(id);
   }, [paused, writing, total, flip, turn]);
 
@@ -108,8 +108,8 @@ export function Guestbook() {
   return (
     <section className="guestbook-garden bg-backdrop px-4 py-20 sm:px-6">
       <div className="guestbook-flowers" aria-hidden="true">
-        <img className="guestbook-lily guestbook-lily-left" src="/images/guestbook-white-lilies.png" alt="" loading="lazy" decoding="async" />
-        <img className="guestbook-lily guestbook-lily-right" src="/images/guestbook-white-lilies.png" alt="" loading="lazy" decoding="async" />
+        <img className="guestbook-lily guestbook-lily-left" src="/images/guestbook-white-lilies.webp" alt="" loading="lazy" decoding="async" />
+        <img className="guestbook-lily guestbook-lily-right" src="/images/guestbook-white-lilies.webp" alt="" loading="lazy" decoding="async" />
       </div>
       <div className="relative z-10 mx-auto max-w-4xl text-center">
         <Reveal>

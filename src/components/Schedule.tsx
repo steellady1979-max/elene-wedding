@@ -15,7 +15,7 @@ const ITEMS = [
     title: "ჯვრისწერა",
     place: "სვეტიცხოვლის საკათედრო ტაძარი",
     map: CHURCH_MAP,
-    image: "/images/svetitskhoveli.jpg",
+    image: "/images/svetitskhoveli.webp", width: 1024, height: 768,
     alt: "სვეტიცხოვლის საკათედრო ტაძრის აკვარელი",
   },
   {
@@ -24,7 +24,7 @@ const ITEMS = [
     title: "ხელისმოწერა",
     place: "ფურშეტინო აგარაკი",
     map: VENUE_MAP,
-    image: "/images/furshetino-signing.jpg",
+    image: "/images/furshetino-signing.webp", width: 1302, height: 800,
     alt: "ფურშეტინო აგარაკის საქორწილო გაფორმების აკვარელი",
   },
   {
@@ -33,7 +33,7 @@ const ITEMS = [
     title: "ვახშამი",
     place: "ფურშეტინო აგარაკი",
     map: VENUE_MAP,
-    image: "/images/furshetino-dinner.jpg",
+    image: "/images/furshetino-dinner.webp", width: 1340, height: 784,
     alt: "ფურშეტინო აგარაკის საქორწილო ვახშმის დარბაზი",
   },
 ];
@@ -49,7 +49,7 @@ export function Schedule() {
               <SparkleTitle className="font-geo text-lg tracking-[0.15em]">დღის განრიგი</SparkleTitle>
             </div>
             <ol className="mt-6 grid gap-5">
-              {ITEMS.map(({ time, icon: Icon, title, place, map, image, alt }, i) => (
+              {ITEMS.map(({ time, icon: Icon, title, place, map, image, alt, width, height }, i) => (
                 <li key={time} className="relative flex gap-4">
                   <div className="flex flex-col items-center pl-5 sm:pl-1">
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-wine/20 bg-wine/10">
@@ -73,7 +73,7 @@ export function Schedule() {
                     {image && (
                       <div className="mt-4 flex justify-center -ml-[3.25rem] sm:ml-0">
                         <img
-                          src={image}
+                          src={image} width={width} height={height} decoding="async"
                           alt={alt}
                           loading="lazy"
                           className="mx-auto w-full max-w-sm rounded-none border-y border-ink/10 shadow-soft sm:max-w-md sm:rounded-xl sm:border"

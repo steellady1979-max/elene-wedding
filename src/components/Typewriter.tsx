@@ -19,6 +19,10 @@ export function Typewriter({
 
   useEffect(() => {
     if (!inView) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setCount(text.length);
+      return;
+    }
     let i = 0;
     let interval: number | undefined;
     const start = window.setTimeout(() => {

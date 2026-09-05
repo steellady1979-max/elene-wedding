@@ -1,151 +1,156 @@
 import { useEffect, useRef, useState } from "react";
-import { Volume2, VolumeX } from "lucide-react";
+import { LoaderCircle, Volume2, VolumeX } from "lucide-react";
 
 const VIDEO_ID = "vGJTaP6anOU";
-
+type Player = {
+  playVideo: () => void; pauseVideo: () => void; unMute: () => void;
+  setVolume: (volume: number) => void; destroy: () => void;
+};
+type PlayerEvent = { target: Player; data: number };
 declare global {
   interface Window {
-    YT?: any;
+    YT?: { Player: new (element: HTMLElement, options: {
+      videoId: string; width: number; height: number;
+      playerVars: Record<string, string | number>;
+      events: {
+        onReady: (event: PlayerEvent) => void;
+        onStateChange: (event: PlayerEvent) => void;
+        onError: (event: PlayerEvent) => void; onAutoplayBlocked: () => void;
+      };
+    }) => Player };
     onYouTubeIframeAPIReady?: () => void;
   }
 }
 
 export default function MusicPlayer() {
-  const playerRef = useRef<any>(null);
-  const [ready, setReady] = useState(false);
-  const [muted, setMuted] = useState(true);
+  const host = useRef<HTMLDivElement>(null);
+  const player = useRef<Player | null>(null);
+  const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [attempt, setAttempt] = useState(0);
+  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "playing" | "error">("idle");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
+    if (!attempt) return;
     let cancelled = false;
-    let cleanupGestures = () => {};
-
-    function startMuted() {
-      const p = playerRef.current;
-      if (!p) return;
-      try {
-        p.mute?.();
-        p.setVolume?.(45);
-        p.playVideo?.();
-      } catch {
-        /* noop */
-      }
-    }
-
-    function unmuteOnGesture() {
-      const p = playerRef.current;
-      if (!p) return;
-      try {
-        p.unMute?.();
-        p.setVolume?.(45);
-        p.playVideo?.();
-        setMuted(false);
-      } catch {
-        /* noop */
-      }
-      cleanupGestures();
-    }
-
-    function createPlayer() {
-      if (cancelled || playerRef.current || !window.YT?.Player) return;
-      playerRef.current = new window.YT.Player("hidden-yt-audio", {
-        videoId: VIDEO_ID,
-        playerVars: {
-          autoplay: 1,
-          mute: 1,
-          controls: 0,
-          playsinline: 1,
-          loop: 1,
-          playlist: VIDEO_ID,
-        },
+    const clearTimer = () => {
+      if (timeout.current) clearTimeout(timeout.current);
+      timeout.current = null;
+    };
+    const fail = () => {
+      if (cancelled) return;
+      clearTimer();
+      setStatus("error");
+      setMessage("მუსიკა ვერ ჩაიტვირთა. სცადეთ ხელახლა.");
+    };
+    const create = () => {
+      if (cancelled || player.current || !host.current || !window.YT?.Player) return;
+      const mount = document.createElement("div");
+      host.current.replaceChildren(mount);
+      player.current = new window.YT.Player(mount, {
+        videoId: VIDEO_ID, width: 200, height: 200,
+        playerVars: { autoplay: 0, controls: 0, playsinline: 1, loop: 1, playlist: VIDEO_ID, origin: window.location.origin },
         events: {
-          onReady: () => {
+          onReady: ({ target }) => {
             if (cancelled) return;
-            setReady(true);
-            startMuted();
-
-            const events: (keyof WindowEventMap)[] = [
-              "pointerdown",
-              "touchstart",
-              "keydown",
-              "scroll",
-            ];
-            events.forEach((ev) =>
-              window.addEventListener(ev, unmuteOnGesture, { once: true, passive: true }),
-            );
-            cleanupGestures = () => {
-              events.forEach((ev) => window.removeEventListener(ev, unmuteOnGesture));
-            };
+            clearTimer();
+            setStatus("loading");
+            target.setVolume(45);
+            target.unMute();
+            timeout.current = setTimeout(() => {
+              setStatus("ready"); setMessage("მუსიკის ჩასართავად შეეხეთ ღილაკს.");
+            }, 12000);
+            target.playVideo();
+          },
+          onStateChange: ({ data }) => {
+            if (cancelled) return;
+            if (data === 1) {
+              clearTimer(); setStatus("playing"); setMessage("");
+            } else if (data === 2 || data === 0) {
+              clearTimer(); setStatus("ready");
+            }
+          },
+          onError: ({ data }) => { console.warn("Music playback error", data); fail(); },
+          onAutoplayBlocked: () => {
+            if (cancelled) return;
+            clearTimer(); setStatus("ready");
+            setMessage("მუსიკის ჩასართავად შეეხეთ ღილაკს.");
           },
         },
       });
-    }
-
-    if (window.YT?.Player) {
-      createPlayer();
-    } else {
-      const prev = window.onYouTubeIframeAPIReady;
-      window.onYouTubeIframeAPIReady = () => {
-        prev?.();
-        createPlayer();
-      };
-      if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
-        const s = document.createElement("script");
-        s.src = "https://www.youtube.com/iframe_api";
-        document.body.appendChild(s);
-      }
-    }
-
-    return () => {
-      cancelled = true;
-      cleanupGestures();
-      try {
-        playerRef.current?.destroy?.();
-      } catch {
-        /* noop */
-      }
-      playerRef.current = null;
     };
-  }, []);
+    const previous = window.onYouTubeIframeAPIReady;
+    const onReady = () => { previous?.(); create(); };
+    window.onYouTubeIframeAPIReady = onReady;
+    let script = document.querySelector<HTMLScriptElement>('script[src="https://www.youtube.com/iframe_api"]');
+    if (!window.YT?.Player) {
+      if (!script) {
+        script = document.createElement("script");
+        script.src = "https://www.youtube.com/iframe_api";
+        script.async = true;
+        document.body.appendChild(script);
+      }
+      script.addEventListener("error", fail);
+    } else create();
+    timeout.current = setTimeout(fail, 20000);
+    const onVisibility = () => {
+      if (document.hidden) {
+        player.current?.pauseVideo();
+        setStatus(current => current === "playing" ? "ready" : current);
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      cancelled = true; clearTimer();
+      document.removeEventListener("visibilitychange", onVisibility);
+      script?.removeEventListener("error", fail);
+      if (window.onYouTubeIframeAPIReady === onReady) { if (previous) window.onYouTubeIframeAPIReady = previous; else delete window.onYouTubeIframeAPIReady; }
+      player.current?.destroy(); player.current = null;
+      // Allow a failed API download to be retried.
+      if (!window.YT?.Player) script?.remove();
+    };
+  }, [attempt]);
+
+  useEffect(() => {
+    if (!message || status === "loading") return;
+    const hide = setTimeout(() => setMessage(""), 5000);
+    return () => clearTimeout(hide);
+  }, [message, status]);
 
   function toggle() {
-    const p = playerRef.current;
-    if (!p) return;
-    if (muted) {
-      p.unMute?.();
-      p.setVolume?.(45);
-      p.playVideo?.();
-      setMuted(false);
-    } else {
-      p.mute?.();
-      setMuted(true);
+    if (status === "idle" || status === "error") {
+      setStatus("loading"); setMessage("მუსიკა იტვირთება…"); setAttempt(value => value + 1);
+    } else if (status === "playing") {
+      player.current?.pauseVideo(); setStatus("ready");
+    } else if (status === "ready") {
+      player.current?.unMute(); player.current?.setVolume(45);
+
+      setStatus("loading"); setMessage("მუსიკა იტვირთება…");
+      timeout.current = setTimeout(() => {
+        setStatus("ready"); setMessage("მუსიკის ჩასართავად სცადეთ ხელახლა.");
+      }, 12000);
+      player.current?.playVideo();
     }
   }
 
   return (
     <>
-      <div
-        aria-hidden="true"
-        style={{ display: "none", position: "absolute", width: 0, height: 0, overflow: "hidden" }}
-      >
-        <div id="hidden-yt-audio" />
+      <div ref={host} aria-hidden="true" inert className="pointer-events-none fixed -left-[300px] top-0 h-[200px] w-[200px] overflow-hidden" />
+      <div className="music-controls fixed right-5 z-50 flex max-w-[calc(100vw-2.5rem)] items-center gap-3">
+        <span role="status" className={message ? "rounded-xl bg-wine px-3 py-2 font-geo text-sm text-white shadow-soft" : "sr-only"}>{message}</span>
+        {status === "error" && (
+          <a href={"https://www.youtube.com/watch?v=" + VIDEO_ID} target="_blank" rel="noreferrer"
+            className="rounded-xl bg-wine px-3 py-2 font-geo text-sm text-white underline">
+            მუსიკის გახსნა
+          </a>
+        )}
+        <button type="button" onClick={toggle} disabled={status === "loading"}
+          aria-label={status === "playing" ? "მუსიკის გამორთვა" : status === "error" ? "მუსიკის ხელახლა ჩართვა" : "მუსიკის ჩართვა"}
+          aria-pressed={status === "playing"} aria-busy={status === "loading"}
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-parchment/30 bg-wine text-parchment shadow-soft transition hover:bg-wine/90 disabled:opacity-70 sm:h-14 sm:w-14">
+          {status === "loading" ? <LoaderCircle className="h-5 w-5 animate-spin" /> : status === "playing" ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
+        </button>
       </div>
-
-      <button
-        type="button"
-        onClick={toggle}
-        disabled={!ready}
-        aria-label={muted ? "მუსიკის ჩართვა" : "მუსიკის დადუმება"}
-        className="fixed bottom-5 right-5 z-50 flex h-12 w-12 items-center justify-center rounded-full border border-parchment/30 bg-wine/95 text-parchment shadow-soft backdrop-blur transition hover:scale-105 hover:bg-wine disabled:opacity-50 sm:h-14 sm:w-14"
-      >
-        {muted ? (
-          <VolumeX className="h-5 w-5" strokeWidth={1.5} />
-        ) : (
-          <Volume2 className="h-5 w-5" strokeWidth={1.5} />
-        )}
-        {!muted && (
-          <span className="pointer-events-none absolute inset-0 animate-ping rounded-full border border-parchment/40" />
-        )}
-      </button>
     </>
   );
 }

@@ -477,3 +477,18 @@
   .guestbook-lily-left { left: -160px; top: -55px; }
   .guestbook-lily-right { right: -150px; bottom: -60px; }
 }
+/* Mobile viewport, touch and motion preferences. */
+html { -webkit-text-size-adjust: 100%; }
+.music-controls { bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px)); }
+button, a, select { touch-action: manipulation; }
+button:focus-visible, a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+@supports (height: 100svh) { .min-h-screen { min-height: 100svh; } .h-screen { height: 100svh; } }
+@media (max-width: 640px) {
+  input, textarea, select { font-size: 16px !important; }
+  .guestbook-garden button:has(svg) { min-width: 44px; min-height: 44px; }
+  .guestbook-garden { padding-bottom: 7rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; transition-delay: 0ms !important; scroll-behavior: auto !important; }
+  .reveal { opacity: 1 !important; transform: none !important; }
+}

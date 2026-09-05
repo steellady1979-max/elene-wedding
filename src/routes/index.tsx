@@ -11,11 +11,11 @@ import { supabase } from "@/integrations/supabase/client";
 
 
 
-const panelImg = "/images/panel.jpg";
-const bowImg = "/images/bow.png";
-const archImg = "/images/arch.jpg";
-const envelopeImg = "/images/envelope-olive.png";
-const coupleImg = "/images/couple.jpg";
+const panelImg = "/images/panel.webp";
+const bowImg = "/images/bow.webp";
+const archImg = "/images/arch.webp";
+const envelopeImg = "/images/envelope-olive.webp";
+const coupleImg = "/images/couple.webp";
 
 const WEDDING_DATE = new Date("2026-10-15T16:00:00+04:00");
 
@@ -51,8 +51,9 @@ function Invitation() {
       <h1 className="sr-only">ლაშა და მარიამი — ქორწილის მოწვევა, 15 ოქტომბერი, 2026</h1>
 
       <div
-        className={`transition-all duration-[1600ms] ease-out ${
-          open ? "opacity-100 blur-0" : "pointer-events-none h-screen overflow-hidden opacity-70 blur-[2px]"
+        inert={!open}
+        className={`transition-opacity duration-700 ease-out ${
+          open ? "opacity-100" : "pointer-events-none h-screen overflow-hidden opacity-0"
         }`}
       >
         <Hero />
@@ -75,7 +76,7 @@ function Invitation() {
         aria-label="მოწვევის გახსნა"
         onClick={openCard}
         onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") openCard();
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openCard(); }
         }}
         onTouchStart={(e) => (startX.current = e.touches[0]!.clientX)}
         onTouchMove={(e) => {
@@ -87,7 +88,7 @@ function Invitation() {
         <Door side="right" open={open} />
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <img
-            src={bowImg}
+            src={bowImg} fetchPriority="high" decoding="async"
             alt="თეთრი შიფონის ბაფთა"
             width={1024}
             height={1536}
@@ -114,7 +115,7 @@ function Door({ side, open }: { side: "left" | "right"; open: boolean }) {
       aria-hidden="true"
     >
       <img
-        src={panelImg}
+        src={panelImg} fetchPriority="high" decoding="async"
         alt=""
         width={1024}
         height={1920}
@@ -130,7 +131,7 @@ function Hero() {
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
       <img
-        src={archImg}
+        src={archImg} decoding="async"
         alt="აკვარელით დახატული თაღი ლაგო დი კომოს ხედით"
         className="absolute inset-0 h-full w-full object-cover"
       />
@@ -169,7 +170,7 @@ function Countdown() {
   return (
     <div className="mt-8 flex gap-3 rounded-2xl bg-parchment/70 px-5 py-4 backdrop-blur-[2px]">
       {parts.map((p) => (
-        <div key={p.l} className="w-14">
+        <div key={p.l} className="w-12 sm:w-14">
           <p className="font-geo text-2xl text-wine">{String(p.v).padStart(2, "0")}</p>
           <p className="font-geo text-[0.6rem] tracking-[0.2em] text-ink/60">{p.l}</p>
         </div>
@@ -203,7 +204,7 @@ function EnvelopeSection() {
         >
           {/* back of envelope */}
           <img
-            src={envelopeImg}
+            src={envelopeImg} width={1024} height={768} loading="lazy" decoding="async"
             alt="ოლივისფერი კონვერტი ოქროსფერი ბეჭდით"
             className="relative z-0 w-full drop-shadow-[0_20px_35px_rgba(90,74,56,0.25)]"
           />
@@ -318,6 +319,9 @@ function Details() {
                 </li>
               ))}
             </ul>
+            <p className="mt-5 border-t border-ink/15 pt-4 font-geo text-base leading-relaxed text-ink/85">
+              გთხოვთ არ ჩაიცვათ მუქი ფერები: შავი, შინდისფერი, მწვანე.
+            </p>
 
           </Card>
         </Reveal>
@@ -335,14 +339,14 @@ function Rsvp() {
   return (
     <section className="relative overflow-hidden bg-parchment px-6 py-20">
       <img
-        src="/images/floral-branch.png"
+        src="/images/floral-branch.webp"
         alt=""
         aria-hidden="true"
         loading="lazy"
         className="pointer-events-none absolute right-0 top-0 z-0 w-[46%] max-w-[11rem] select-none opacity-60 sm:max-w-[16rem] sm:opacity-70"
       />
       <img
-        src="/images/floral-branch.png"
+        src="/images/floral-branch.webp"
         alt=""
         aria-hidden="true"
         loading="lazy"

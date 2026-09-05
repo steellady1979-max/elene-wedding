@@ -78,17 +78,17 @@ function Admin() {
   }
 
   const exportToExcel = () => {
-    let csvContent = "\uFEFFკატეგორია,სახელი / ავტორი,სტატუსი / მილოცვა, +1 პერსონა, თარიღი\n";
+    let csvContent = "\uFEFFკატეგორია,სახელი / ავტორი,სტატუსი / მილოცვა,სტუმრები,თარიღი\n";
 
     if (rows) {
       rows.forEach((r) => {
-        const category = r.attending ? "მოდის" : "ვერ მოდის";
-        const name = `"${(r.full_name || "").replace(/"/g, '""')}"`;
-        const status = r.attending ? "დიახ" : "არა";
-        const plusOne = `"${(r.plus_one_name || "-").replace(/"/g, '""')}"`;
+        const attending = r.status === "attending";
+        const category = attending ? "მოდის" : "ვერ მოდის";
+        const name = `"${(r.name || "").replace(/"/g, '""')}"`;
+        const status = attending ? "დიახ" : "არა";
         const date = `"${new Date(r.created_at).toLocaleDateString("ka-GE")}"`;
 
-        csvContent += `"${category}",${name},${status},${plusOne},${date}\n`;
+        csvContent += `"${category}",${name},${status},${r.count},${date}\n`;
       });
     }
 
@@ -105,11 +105,12 @@ function Admin() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `Tekla_Zauri_Guests_Wishes_${new Date().toISOString().split("T")[0]}.csv`);
+    link.setAttribute("download", `Guests_Wishes_${new Date().toISOString().split("T")[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
+
 
   if (rows === null) {
     return (

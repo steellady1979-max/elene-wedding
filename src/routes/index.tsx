@@ -288,7 +288,7 @@ function EnvelopeSection() {
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="rounded-2xl border border-ink/10 bg-parchment/95 p-7 shadow-soft">
-      <SparkleTitle className="font-geo text-lg tracking-[0.15em]">{title}</SparkleTitle>
+      <h2 className="font-geo text-lg tracking-[0.15em] text-ink">{title}</h2>
       <div className="mt-3 font-geo text-sm leading-[1.9] text-ink/75">{children}</div>
     </div>
   );

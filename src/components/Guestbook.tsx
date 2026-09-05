@@ -106,8 +106,12 @@ export function Guestbook() {
   const next = flip ? (spreads[flip.to] ?? []) : current;
 
   return (
-    <section className="bg-backdrop px-4 py-20 sm:px-6">
-      <div className="mx-auto max-w-4xl text-center">
+    <section className="guestbook-garden bg-backdrop px-4 py-20 sm:px-6">
+      <div className="guestbook-flowers" aria-hidden="true">
+        <img className="guestbook-lily guestbook-lily-left" src="/images/guestbook-white-lilies.png" alt="" loading="lazy" decoding="async" />
+        <img className="guestbook-lily guestbook-lily-right" src="/images/guestbook-white-lilies.png" alt="" loading="lazy" decoding="async" />
+      </div>
+      <div className="relative z-10 mx-auto max-w-4xl text-center">
         <Reveal>
           <SparkleTitle className="font-geo text-2xl text-parchment" shimmer={false}>
             სურვილების წიგნი

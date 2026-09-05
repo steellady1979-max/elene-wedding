@@ -193,9 +193,10 @@ function Admin() {
         <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
           <Stat label="სულ სტუმარი" value={totalGuests} />
           <Stat label="მოდის" value={yes.length} />
-          <Stat label="+1" value={plusOnes.length} />
+          <Stat label="ვერ მოდის" value={no.length} />
           <Stat label="სურვილები" value={wishes.length} />
         </div>
+
 
         <Table title="მოდის" rows={yes} />
         <Table title="ვერ მოდის" rows={no} />

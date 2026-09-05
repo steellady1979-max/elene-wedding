@@ -41,15 +41,25 @@ const ITEMS = [
 export function Schedule() {
   return (
     <section className="relative overflow-hidden bg-backdrop px-0 pb-4 sm:px-6">
-      <FloralCorner className="left-[-14%] top-[-3%] w-[40%] max-w-[13rem] opacity-75" />
+      <FloralCorner className="left-[-14%] top-[-3%] w-[40%] max-w-[13rem]" />
       <FloralCorner
-        className="bottom-[-4%] right-[-14%] w-[40%] max-w-[13rem] rotate-180 opacity-60"
+        className="bottom-[-4%] right-[-14%] w-[40%] max-w-[13rem] rotate-180"
         flip
+        level="medium"
       />
-      <div className="relative mx-auto max-w-none sm:max-w-3xl">
+      <FloralCorner
+        className="left-[-10%] top-[42%] w-[26%] max-w-[8rem]"
+        level="max"
+      />
+      <div className="relative z-10 mx-auto max-w-none sm:max-w-3xl">
         <Reveal>
           <div className="relative overflow-hidden rounded-none border-x-0 border-t-0 border-b border-ink/10 bg-parchment/95 py-5 shadow-none sm:rounded-2xl sm:border sm:p-7 sm:shadow-soft">
-            <FloralCorner className="right-[-6%] top-[-6%] w-[32%] max-w-[9rem] opacity-70" flip />
+            <FloralCorner className="right-[-6%] top-[-6%] w-[32%] max-w-[9rem]" flip level="medium" />
+            <FloralCorner
+              className="bottom-[-8%] left-[-8%] w-[28%] max-w-[8rem] rotate-180"
+              level="max"
+            />
+
             <div className="relative px-5 sm:px-0">
               <SparkleTitle className="font-geo text-lg tracking-[0.15em]">დღის განრიგი</SparkleTitle>
             </div>

@@ -113,7 +113,7 @@ export function Guestbook() {
       </div>
       <div className="relative z-10 mx-auto max-w-4xl text-center">
         <Reveal>
-          <SparkleTitle className="font-geo text-2xl text-parchment" shimmer={false}>
+          <SparkleTitle className="guestbook-title font-geo text-2xl" shimmer={false}>
             სურვილების წიგნი
           </SparkleTitle>
         </Reveal>

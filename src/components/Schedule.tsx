@@ -1,5 +1,5 @@
 import { Reveal } from "./Reveal";
-import { FloralCorner } from "./FloralCorner";
+
 import { SparkleTitle } from "./SparkleTitle";
 import { Church, MapPin, PenLine, UtensilsCrossed } from "lucide-react";
 
@@ -41,24 +41,9 @@ const ITEMS = [
 export function Schedule() {
   return (
     <section className="relative overflow-hidden bg-backdrop px-0 pb-4 sm:px-6">
-      <FloralCorner className="left-0 top-0 w-[48%] max-w-[13rem] sm:left-[-8%] sm:top-[-3%] sm:w-[52%] sm:max-w-[18rem]" />
-      <FloralCorner
-        className="bottom-0 right-0 w-[48%] max-w-[13rem] rotate-180 sm:bottom-[-4%] sm:right-[-8%] sm:w-[52%] sm:max-w-[18rem]"
-        flip
-        level="medium"
-      />
-      <FloralCorner
-        className="left-0 top-[42%] w-[30%] max-w-[9rem] sm:left-[-6%] sm:w-[34%] sm:max-w-[11rem]"
-        level="max"
-      />
       <div className="relative z-10 mx-auto max-w-none sm:max-w-3xl">
         <Reveal>
           <div className="relative overflow-hidden rounded-none border-x-0 border-t-0 border-b border-ink/10 bg-parchment/95 py-5 shadow-none sm:rounded-2xl sm:border sm:p-7 sm:shadow-soft">
-            <FloralCorner className="right-0 top-0 w-[38%] max-w-[10rem] sm:right-[-4%] sm:top-[-6%] sm:w-[42%] sm:max-w-[13rem]" flip level="medium" />
-            <FloralCorner
-              className="bottom-0 left-0 w-[36%] max-w-[9.5rem] rotate-180 sm:bottom-[-6%] sm:left-[-5%] sm:w-[40%] sm:max-w-[12rem]"
-              level="max"
-            />
 
             <div className="relative px-5 sm:px-0">
               <SparkleTitle className="font-geo text-lg tracking-[0.15em]">დღის განრიგი</SparkleTitle>

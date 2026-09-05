@@ -41,22 +41,22 @@ const ITEMS = [
 export function Schedule() {
   return (
     <section className="relative overflow-hidden bg-backdrop px-0 pb-4 sm:px-6">
-      <FloralCorner className="left-[-14%] top-[-3%] w-[40%] max-w-[13rem]" />
+      <FloralCorner className="left-0 top-0 w-[34%] max-w-[9rem] sm:left-[-8%] sm:top-[-3%] sm:w-[40%] sm:max-w-[13rem]" />
       <FloralCorner
-        className="bottom-[-4%] right-[-14%] w-[40%] max-w-[13rem] rotate-180"
+        className="bottom-0 right-0 w-[34%] max-w-[9rem] rotate-180 sm:bottom-[-4%] sm:right-[-8%] sm:w-[40%] sm:max-w-[13rem]"
         flip
         level="medium"
       />
       <FloralCorner
-        className="left-[-10%] top-[42%] w-[26%] max-w-[8rem]"
+        className="left-0 top-[42%] w-[20%] max-w-[6rem] sm:left-[-6%] sm:w-[26%] sm:max-w-[8rem]"
         level="max"
       />
       <div className="relative z-10 mx-auto max-w-none sm:max-w-3xl">
         <Reveal>
           <div className="relative overflow-hidden rounded-none border-x-0 border-t-0 border-b border-ink/10 bg-parchment/95 py-5 shadow-none sm:rounded-2xl sm:border sm:p-7 sm:shadow-soft">
-            <FloralCorner className="right-[-6%] top-[-6%] w-[32%] max-w-[9rem]" flip level="medium" />
+            <FloralCorner className="right-0 top-0 w-[26%] max-w-[7rem] sm:right-[-4%] sm:top-[-6%] sm:w-[32%] sm:max-w-[9rem]" flip level="medium" />
             <FloralCorner
-              className="bottom-[-8%] left-[-8%] w-[28%] max-w-[8rem] rotate-180"
+              className="bottom-0 left-0 w-[24%] max-w-[6.5rem] rotate-180 sm:bottom-[-6%] sm:left-[-5%] sm:w-[28%] sm:max-w-[8rem]"
               level="max"
             />
 

@@ -147,10 +147,10 @@ function Admin() {
     );
   }
 
-  const yes = rows.filter((r) => r.attending);
-  const no = rows.filter((r) => !r.attending);
-  const plusOnes = yes.filter((r) => r.plus_one_name && r.plus_one_name.trim().length > 0);
-  const totalGuests = yes.length + plusOnes.length;
+  const yes = rows.filter((r) => r.status === "attending");
+  const no = rows.filter((r) => r.status !== "attending");
+  const totalGuests = yes.reduce((sum, r) => sum + (r.count || 0), 0);
+
 
   return (
     <main className="min-h-screen bg-backdrop px-4 py-10 sm:px-6 sm:py-14">

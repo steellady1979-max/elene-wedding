@@ -332,6 +332,21 @@ function Rsvp() {
   const [sent, setSent] = useState(false);
   return (
     <section className="relative overflow-hidden bg-parchment px-6 py-20">
+      <img
+        src="/images/floral-branch.png"
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        className="pointer-events-none absolute right-0 top-0 z-0 w-[46%] max-w-[11rem] select-none opacity-60 sm:max-w-[16rem] sm:opacity-70"
+      />
+      <img
+        src="/images/floral-branch.png"
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        className="pointer-events-none absolute bottom-0 left-0 z-0 w-[42%] max-w-[10rem] -scale-x-100 rotate-180 select-none opacity-45 sm:max-w-[14rem] sm:opacity-55"
+      />
+
       <div className="relative z-10 mx-auto max-w-xl text-center">
 
         <Reveal>

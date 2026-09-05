@@ -301,7 +301,12 @@ const DRESS = [
 
 function Details() {
   return (
-    <section className="bg-backdrop px-6 py-20">
+    <section className="relative overflow-hidden bg-backdrop px-6 py-20">
+      <FloralCorner className="left-[-15%] top-[-4%] w-[42%] max-w-[14rem] opacity-80" />
+      <FloralCorner
+        className="bottom-[-6%] right-[-15%] w-[42%] max-w-[14rem] rotate-180 opacity-70"
+        flip
+      />
       <div className="mx-auto grid max-w-3xl gap-6">
         <Reveal>
           <Card title="დრესკოდი">
@@ -366,7 +371,9 @@ function Rsvp() {
 
 function CoupleImage() {
   return (
-    <section className="bg-parchment px-0 pt-16 sm:px-6">
+    <section className="relative overflow-hidden bg-parchment px-0 pt-16 sm:px-6">
+      <FloralCorner className="left-[-12%] top-[-2%] w-[34%] max-w-[11rem] opacity-70" />
+      <FloralCorner className="right-[-12%] top-[-2%] w-[34%] max-w-[11rem] opacity-70" flip />
       <Reveal>
         <figure className="mx-auto max-w-none sm:max-w-xl">
           <img

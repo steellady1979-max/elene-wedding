@@ -7,7 +7,6 @@ import { Schedule } from "@/components/Schedule";
 import { Guestbook } from "@/components/Guestbook";
 import MusicPlayer from "@/components/MusicPlayer";
 import { FloralCorner } from "@/components/FloralCorner";
-import { Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const panelImg = "/images/panel.jpg";
@@ -296,7 +295,7 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
 }
 
 const DRESS = [
-  { icon: Sparkles, label: "სტილი", text: "სადა და ელეგანტური." },
+  { label: "სტილი", text: "სადა და ელეგანტური." },
 ];
 
 

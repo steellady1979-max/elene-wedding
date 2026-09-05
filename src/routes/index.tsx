@@ -336,12 +336,13 @@ function Rsvp() {
   const [sent, setSent] = useState(false);
   return (
     <section className="relative overflow-hidden bg-parchment px-6 py-20">
-      <FloralCorner className="bottom-[-6%] left-[-16%] w-[44%] max-w-[15rem] rotate-180 opacity-70" />
+      <FloralCorner className="bottom-[-6%] left-[-16%] w-[44%] max-w-[15rem] rotate-180" />
       <FloralCorner
-        className="bottom-[-6%] right-[-16%] w-[44%] max-w-[15rem] rotate-180 opacity-70"
+        className="bottom-[-6%] right-[-16%] w-[44%] max-w-[15rem] rotate-180"
         flip
+        level="medium"
       />
-      <div className="mx-auto max-w-xl text-center">
+      <div className="relative z-10 mx-auto max-w-xl text-center">
         <Reveal>
           <SparkleTitle className="font-geo text-2xl">დასტურის ფორმა</SparkleTitle>
         </Reveal>
@@ -367,22 +368,23 @@ function Rsvp() {
 
 function CoupleImage() {
   return (
-    <section className="relative overflow-hidden bg-parchment px-0 pt-16 sm:px-6">
-      <FloralCorner className="left-[-12%] top-[-2%] w-[34%] max-w-[11rem] opacity-70" />
-      <FloralCorner className="right-[-12%] top-[-2%] w-[34%] max-w-[11rem] opacity-70" flip />
+    <section className="bg-parchment px-4 py-14 sm:px-6">
       <Reveal>
-        <figure className="mx-auto max-w-none sm:max-w-xl">
+        <figure className="mx-auto w-full max-w-md">
           <img
             src={coupleImg}
-            alt="აკვარელით დახატული ლაშა და მარიამი იტალიურ ბალკონზე"
+            alt="აკვარელით დახატული ლაშა და მარიამი ყვავილებით"
             loading="lazy"
-            className="w-full rounded-none border-y border-ink/10 shadow-soft sm:rounded-2xl sm:border"
+            width={1079}
+            height={1332}
+            className="mx-auto block h-auto w-full rounded-2xl border border-ink/10 object-cover shadow-soft"
           />
         </figure>
       </Reveal>
     </section>
   );
 }
+
 
 function RsvpForm({ onSent }: { onSent: () => void }) {
   const [name, setName] = useState("");

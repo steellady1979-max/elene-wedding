@@ -45,8 +45,8 @@ export const getRsvps = createServerFn({ method: "POST" })
 
     const [rsvps, wishes] = await Promise.all([
       supabaseAdmin
-        .from("rsvp_responses")
-        .select("id, name, status, count, created_at")
+        .from("rsvps")
+        .select("id, full_name, status, guest_count, created_at")
         .order("created_at", { ascending: false }),
       supabaseAdmin
         .from("wishes")
@@ -58,7 +58,39 @@ export const getRsvps = createServerFn({ method: "POST" })
 
     return {
       locked: false as const,
-      rows: (rsvps.data ?? []) as RsvpRow[],
+      rows: (rsvps.data ?? []).map((r) => ({
+        id: r.id,
+        name: r.full_name,
+        status: r.status,
+        count: r.guest_count,
+        created_at: r.created_at,
+      })) as RsvpRow[],
       wishes: (wishes.data ?? []) as WishRow[],
     };
+  });
+
+const deleteInput = (input: unknown) =>
+  z
+    .object({
+      password: z.string().max(200),
+      kind: z.enum(["rsvp", "wish"]),
+      id: z.string().uuid(),
+    })
+    .parse(input);
+
+export const deleteEntry = createServerFn({ method: "POST" })
+  .inputValidator(deleteInput)
+  .handler(async ({ data }) => {
+    if (!isValidPassword(data.password)) return { locked: true as const };
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { error } = await supabaseAdmin
+      .from(data.kind === "rsvp" ? "rsvps" : "wishes")
+      .delete()
+      .eq("id", data.id);
+
+    if (error) throw new Error(error.message);
+
+    return { locked: false as const, ok: true as const };
   });

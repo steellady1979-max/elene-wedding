@@ -414,10 +414,10 @@ function RsvpForm({ onSent }: { onSent: () => void }) {
     setBusy(true);
     setError(null);
     try {
-      const { error: insertError } = await supabase.from("rsvp_responses").insert({
-        name: fullName,
+      const { error: insertError } = await supabase.from("rsvps").insert({
+        full_name: fullName,
         status,
-        count: status === "declined" ? 0 : 1,
+        guest_count: status === "declined" ? 0 : 1,
       });
       if (insertError) throw insertError;
       onSent();

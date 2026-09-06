@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useState } from "react";
-import { Lock, LogOut, RefreshCw } from "lucide-react";
-import { getRsvps, type RsvpRow, type WishRow } from "@/lib/admin.functions";
+import { Lock, LogOut, RefreshCw, Trash2 } from "lucide-react";
+import { deleteEntry, getRsvps, type RsvpRow, type WishRow } from "@/lib/admin.functions";
 
 const PW_KEY = "wedding-admin-pw";
 
@@ -23,6 +23,7 @@ export const Route = createFileRoute("/admin")({
 
 function Admin() {
   const load = useServerFn(getRsvps);
+  const remove = useServerFn(deleteEntry);
 
   const [rows, setRows] = useState<RsvpRow[] | null>(null);
   const [wishes, setWishes] = useState<WishRow[]>([]);
@@ -74,6 +75,38 @@ function Admin() {
     }
     setPassword("");
   }
+
+  const onDelete = useCallback(
+    async (kind: "rsvp" | "wish", id: string, label: string) => {
+      if (typeof window !== "undefined") {
+        const msg =
+          kind === "rsvp"
+            ? `წავშალოთ სტუმარი „${label}“ სიიდან?`
+            : `წავშალოთ სურვილი — „${label}“?`;
+        if (!window.confirm(msg)) return;
+      }
+      const key = typeof window !== "undefined" ? sessionStorage.getItem(PW_KEY) || "" : "";
+      if (!key) return;
+      setError(null);
+      setBusy(true);
+      try {
+        const res = await remove({ data: { password: key, kind, id } });
+        if (res.locked) {
+          setRows(null);
+          return;
+        }
+        if (kind === "rsvp") setRows((prev) => (prev ? prev.filter((r) => r.id !== id) : prev));
+        else setWishes((prev) => prev.filter((w) => w.id !== id));
+      } catch {
+        setError("წაშლა ვერ მოხერხდა");
+      } finally {
+        setBusy(false);
+      }
+    },
+    [remove],
+  );
+
+
 
   const exportToExcel = () => {
     let csvContent = "\uFEFFკატეგორია,სახელი / ავტორი,სტატუსი / მილოცვა,სტუმრები,თარიღი\n";
@@ -197,11 +230,16 @@ function Admin() {
         </div>
 
 
-        <Table title="მოდის" rows={yes} />
-        <Table title="ვერ მოდის" rows={no} />
-        
+        <Table title="მოდის" rows={yes} onDelete={onDelete} busy={busy} />
+        <Table title="ვერ მოდის" rows={no} onDelete={onDelete} busy={busy} />
+
         {/* სურვილების ცხრილი ადმინ-პანელისთვის */}
-        <WishesTable title="სტუმრების სურვილები" wishes={wishes} />
+        <WishesTable
+          title="სტუმრების სურვილები"
+          wishes={wishes}
+          onDelete={onDelete}
+          busy={busy}
+        />
       </div>
     </main>
   );
@@ -216,7 +254,35 @@ function Stat({ label, value }: { label: string; value: number }) {
   );
 }
 
-function Table({ title, rows }: { title: string; rows: RsvpRow[] }) {
+type DeleteFn = (kind: "rsvp" | "wish", id: string, label: string) => void | Promise<void>;
+
+function DeleteButton({ onClick, busy }: { onClick: () => void; busy: boolean }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={busy}
+      aria-label="წაშლა"
+      title="წაშლა"
+      className="inline-flex items-center gap-1 rounded-full border border-wine/25 px-3 py-1.5 font-geo text-[0.65rem] tracking-[0.12em] text-wine transition hover:bg-wine hover:text-parchment disabled:opacity-50"
+    >
+      <Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} />
+      წაშლა
+    </button>
+  );
+}
+
+function Table({
+  title,
+  rows,
+  onDelete,
+  busy,
+}: {
+  title: string;
+  rows: RsvpRow[];
+  onDelete: DeleteFn;
+  busy: boolean;
+}) {
   return (
     <section className="mt-8 overflow-hidden rounded-2xl border border-ink/10 bg-parchment/95 shadow-soft">
       <h2 className="flex items-center justify-between gap-3 border-b border-ink/10 bg-ink/[0.03] px-5 py-4 font-geo text-sm tracking-[0.2em] text-ink/70">
@@ -236,6 +302,7 @@ function Table({ title, rows }: { title: string; rows: RsvpRow[] }) {
                 <th className="px-5 py-3">სტატუსი</th>
                 <th className="px-5 py-3">სტუმრები</th>
                 <th className="px-5 py-3">თარიღი</th>
+                <th className="px-5 py-3 text-right">მოქმედება</th>
               </tr>
             </thead>
             <tbody>
@@ -252,7 +319,9 @@ function Table({ title, rows }: { title: string; rows: RsvpRow[] }) {
                   <td className="px-5 py-3 text-ink/50">
                     {new Date(r.created_at).toLocaleDateString("ka-GE")}
                   </td>
-
+                  <td className="px-5 py-3 text-right">
+                    <DeleteButton busy={busy} onClick={() => void onDelete("rsvp", r.id, r.name)} />
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -263,7 +332,17 @@ function Table({ title, rows }: { title: string; rows: RsvpRow[] }) {
   );
 }
 
-function WishesTable({ title, wishes }: { title: string; wishes: WishRow[] }) {
+function WishesTable({
+  title,
+  wishes,
+  onDelete,
+  busy,
+}: {
+  title: string;
+  wishes: WishRow[];
+  onDelete: DeleteFn;
+  busy: boolean;
+}) {
   return (
     <section className="mt-8 overflow-hidden rounded-2xl border border-ink/10 bg-parchment/95 shadow-soft">
       <h2 className="flex items-center justify-between gap-3 border-b border-ink/10 bg-ink/[0.03] px-5 py-4 font-geo text-sm tracking-[0.2em] text-ink/70">
@@ -282,6 +361,7 @@ function WishesTable({ title, wishes }: { title: string; wishes: WishRow[] }) {
                 <th className="px-5 py-3">ავტორი</th>
                 <th className="px-5 py-3">სურვილი / მილოცვა</th>
                 <th className="px-5 py-3">თარიღი</th>
+                <th className="px-5 py-3 text-right">მოქმედება</th>
               </tr>
             </thead>
             <tbody>
@@ -294,6 +374,12 @@ function WishesTable({ title, wishes }: { title: string; wishes: WishRow[] }) {
                   <td className="px-5 py-3 text-ink/90 italic">“{w.message}”</td>
                   <td className="px-5 py-3 text-ink/50 text-xs">
                     {new Date(w.created_at).toLocaleDateString("ka-GE")}
+                  </td>
+                  <td className="px-5 py-3 text-right">
+                    <DeleteButton
+                      busy={busy}
+                      onClick={() => void onDelete("wish", w.id, w.message.slice(0, 40))}
+                    />
                   </td>
                 </tr>
               ))}

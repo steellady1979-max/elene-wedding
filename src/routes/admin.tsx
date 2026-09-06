@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useState } from "react";
-import { Lock, LogOut, RefreshCw } from "lucide-react";
-import { getRsvps, type RsvpRow, type WishRow } from "@/lib/admin.functions";
+import { Lock, LogOut, RefreshCw, Trash2 } from "lucide-react";
+import { deleteEntry, getRsvps, type RsvpRow, type WishRow } from "@/lib/admin.functions";
 
 const PW_KEY = "wedding-admin-pw";
 

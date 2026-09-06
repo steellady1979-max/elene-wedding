@@ -230,11 +230,16 @@ function Admin() {
         </div>
 
 
-        <Table title="მოდის" rows={yes} />
-        <Table title="ვერ მოდის" rows={no} />
-        
+        <Table title="მოდის" rows={yes} onDelete={onDelete} busy={busy} />
+        <Table title="ვერ მოდის" rows={no} onDelete={onDelete} busy={busy} />
+
         {/* სურვილების ცხრილი ადმინ-პანელისთვის */}
-        <WishesTable title="სტუმრების სურვილები" wishes={wishes} />
+        <WishesTable
+          title="სტუმრების სურვილები"
+          wishes={wishes}
+          onDelete={onDelete}
+          busy={busy}
+        />
       </div>
     </main>
   );

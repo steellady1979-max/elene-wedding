@@ -76,6 +76,38 @@ function Admin() {
     setPassword("");
   }
 
+  const onDelete = useCallback(
+    async (kind: "rsvp" | "wish", id: string, label: string) => {
+      if (typeof window !== "undefined") {
+        const msg =
+          kind === "rsvp"
+            ? `წავშალოთ სტუმარი „${label}“ სიიდან?`
+            : `წავშალოთ სურვილი — „${label}“?`;
+        if (!window.confirm(msg)) return;
+      }
+      const key = typeof window !== "undefined" ? sessionStorage.getItem(PW_KEY) || "" : "";
+      if (!key) return;
+      setError(null);
+      setBusy(true);
+      try {
+        const res = await remove({ data: { password: key, kind, id } });
+        if (res.locked) {
+          setRows(null);
+          return;
+        }
+        if (kind === "rsvp") setRows((prev) => (prev ? prev.filter((r) => r.id !== id) : prev));
+        else setWishes((prev) => prev.filter((w) => w.id !== id));
+      } catch {
+        setError("წაშლა ვერ მოხერხდა");
+      } finally {
+        setBusy(false);
+      }
+    },
+    [remove],
+  );
+
+
+
   const exportToExcel = () => {
     let csvContent = "\uFEFFკატეგორია,სახელი / ავტორი,სტატუსი / მილოცვა,სტუმრები,თარიღი\n";
 

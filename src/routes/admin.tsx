@@ -23,6 +23,7 @@ export const Route = createFileRoute("/admin")({
 
 function Admin() {
   const load = useServerFn(getRsvps);
+  const remove = useServerFn(deleteEntry);
 
   const [rows, setRows] = useState<RsvpRow[] | null>(null);
   const [wishes, setWishes] = useState<WishRow[]>([]);

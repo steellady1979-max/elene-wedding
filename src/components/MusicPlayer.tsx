@@ -22,12 +22,18 @@ declare global {
   }
 }
 
+const GESTURE_EVENTS = ["touchstart", "touchend", "pointerdown", "click", "keydown"] as const;
+
 export default function MusicPlayer() {
   const host = useRef<HTMLDivElement>(null);
   const player = useRef<Player | null>(null);
   const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [attempt, setAttempt] = useState(0);
-  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "playing" | "error">("idle");
+  // Remember whether the visitor already touched the screen, so a player that
+  // finishes loading after the first touch can start with sound immediately.
+  const gestured = useRef(false);
+  const muted = useRef(true);
+  const [attempt, setAttempt] = useState(1);
+  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "playing" | "error">("loading");
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -43,39 +49,48 @@ export default function MusicPlayer() {
       setStatus("error");
       setMessage("მუსიკა ვერ ჩაიტვირთა. სცადეთ ხელახლა.");
     };
+    const hint = () => {
+      if (cancelled) return;
+      clearTimer();
+      setStatus("ready");
+      setMessage("შეეხეთ ეკრანს და მუსიკა ჩაირთვება ✨");
+    };
     const create = () => {
       if (cancelled || player.current || !host.current || !window.YT?.Player) return;
       const mount = document.createElement("div");
       host.current.replaceChildren(mount);
       player.current = new window.YT.Player(mount, {
         videoId: VIDEO_ID, width: 200, height: 200,
-        playerVars: { autoplay: 0, controls: 0, playsinline: 1, loop: 1, playlist: VIDEO_ID, origin: window.location.origin },
+        // Muted autoplay is allowed by browsers; sound is added on first touch.
+        playerVars: { autoplay: 1, mute: 1, controls: 0, playsinline: 1, loop: 1, playlist: VIDEO_ID, origin: window.location.origin },
         events: {
           onReady: ({ target }) => {
             if (cancelled) return;
             clearTimer();
-            setStatus("loading");
             target.setVolume(45);
-            target.unMute();
-            timeout.current = setTimeout(() => {
-              setStatus("ready"); setMessage("მუსიკის ჩასართავად შეეხეთ ღილაკს.");
-            }, 12000);
+            if (gestured.current) {
+              target.unMute();
+              muted.current = false;
+            }
             target.playVideo();
+            if (muted.current) hint();
           },
           onStateChange: ({ data }) => {
             if (cancelled) return;
             if (data === 1) {
-              clearTimer(); setStatus("playing"); setMessage("");
+              clearTimer();
+              if (muted.current) {
+                setStatus("ready");
+                setMessage("შეეხეთ ეკრანს და მუსიკა ჩაირთვება ✨");
+              } else {
+                setStatus("playing"); setMessage("");
+              }
             } else if (data === 2 || data === 0) {
               clearTimer(); setStatus("ready");
             }
           },
           onError: ({ data }) => { console.warn("Music playback error", data); fail(); },
-          onAutoplayBlocked: () => {
-            if (cancelled) return;
-            clearTimer(); setStatus("ready");
-            setMessage("მუსიკის ჩასართავად შეეხეთ ღილაკს.");
-          },
+          onAutoplayBlocked: () => { hint(); },
         },
       });
     };
@@ -94,7 +109,7 @@ export default function MusicPlayer() {
     } else create();
     timeout.current = setTimeout(fail, 20000);
     const onVisibility = () => {
-      if (document.hidden) {
+      if (document.hidden && !muted.current) {
         player.current?.pauseVideo();
         setStatus(current => current === "playing" ? "ready" : current);
       }
@@ -111,9 +126,27 @@ export default function MusicPlayer() {
     };
   }, [attempt]);
 
+  // First touch anywhere on the page turns the sound on and keeps it playing.
+  useEffect(() => {
+    const activate = () => {
+      gestured.current = true;
+      const current = player.current;
+      if (current) {
+        current.unMute();
+        muted.current = false;
+        current.setVolume(45);
+        current.playVideo();
+        setStatus(status => (status === "ready" || status === "loading") ? "playing" : status);
+      }
+      GESTURE_EVENTS.forEach(event => document.removeEventListener(event, activate));
+    };
+    GESTURE_EVENTS.forEach(event => document.addEventListener(event, activate, { passive: true }));
+    return () => GESTURE_EVENTS.forEach(event => document.removeEventListener(event, activate));
+  }, []);
+
   useEffect(() => {
     if (!message || status === "loading") return;
-    const hide = setTimeout(() => setMessage(""), 5000);
+    const hide = setTimeout(() => setMessage(""), 6000);
     return () => clearTimeout(hide);
   }, [message, status]);
 
@@ -123,7 +156,8 @@ export default function MusicPlayer() {
     } else if (status === "playing") {
       player.current?.pauseVideo(); setStatus("ready");
     } else if (status === "ready") {
-      player.current?.unMute(); player.current?.setVolume(45);
+      gestured.current = true;
+      player.current?.unMute(); muted.current = false; player.current?.setVolume(45);
 
       setStatus("loading"); setMessage("მუსიკა იტვირთება…");
       timeout.current = setTimeout(() => {

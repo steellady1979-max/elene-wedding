@@ -10,7 +10,7 @@ const VENUE_MAP =
 
 const ITEMS = [
   {
-    time: "16:00",
+    time: "15:30",
     icon: Church,
     title: "ჯვრისწერა",
     place: "სვეტიცხოვლის საკათედრო ტაძარი",
@@ -19,22 +19,20 @@ const ITEMS = [
     alt: "სვეტიცხოვლის საკათედრო ტაძრის აკვარელი",
   },
   {
-    time: "18:00",
+    time: "17:30",
     icon: PenLine,
-    title: "ხელისმოწერა",
+    title: "ხელის მოწერა",
     place: "ფურშეტინო აგარაკი",
     map: VENUE_MAP,
     image: "/images/furshetino-signing.webp", width: 1302, height: 800,
     alt: "ფურშეტინო აგარაკის საქორწილო გაფორმების აკვარელი",
   },
   {
-    time: "18:30",
+    time: "18:00",
     icon: UtensilsCrossed,
     title: "ვახშამი",
     place: "ფურშეტინო აგარაკი",
     map: VENUE_MAP,
-    image: "/images/furshetino-dinner.webp", width: 1340, height: 784,
-    alt: "ფურშეტინო აგარაკის საქორწილო ვახშმის დარბაზი",
   },
 ];
 

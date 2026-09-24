@@ -17,7 +17,7 @@ const archImg = "/images/arch.webp";
 const envelopeImg = "/images/envelope-olive.webp";
 const coupleImg = "/images/couple.webp";
 
-const WEDDING_DATE = new Date("2026-10-15T16:00:00+04:00");
+const WEDDING_DATE = new Date("2026-10-15T15:30:00+04:00");
 
 
 export const Route = createFileRoute("/")({
@@ -59,7 +59,6 @@ function Invitation() {
         <Hero />
         <EnvelopeSection />
         <Schedule />
-        <Details />
         <Guestbook />
         <CoupleImage />
         <Rsvp />

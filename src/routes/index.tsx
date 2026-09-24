@@ -287,52 +287,6 @@ function EnvelopeSection() {
 }
 
 
-function Card({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="rounded-2xl border border-ink/10 bg-parchment/95 p-7 shadow-soft">
-      <h2 className="font-geo text-lg tracking-[0.15em] text-ink">{title}</h2>
-      <div className="mt-3 font-geo text-sm leading-[1.9] text-ink/75">{children}</div>
-    </div>
-  );
-}
-
-const DRESS = [
-  { label: "სტილი", text: "სადა და ელეგანტური." },
-];
-
-
-function Details() {
-  return (
-    <section className="relative overflow-hidden bg-backdrop px-6 py-20">
-      <div className="relative z-10 mx-auto grid max-w-3xl gap-6">
-
-        <Reveal>
-          <Card title="დრესკოდი">
-            <ul className="grid gap-4">
-              {DRESS.map(({ label, text }) => (
-                <li key={label}>
-                  <span className="block font-geo text-xs tracking-[0.2em] text-ink/55">
-                    {label}
-                  </span>
-                  <span className="text-ink/80">{text}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-5 border-t border-ink/15 pt-4 font-geo text-base leading-relaxed text-ink/85">
-              გთხოვთ არ ჩაიცვათ მუქი ფერები: შავი, შინდისფერი, მწვანე.
-            </p>
-
-          </Card>
-        </Reveal>
-
-
-
-
-      </div>
-    </section>
-  );
-}
-
 function Rsvp() {
   const [sent, setSent] = useState(false);
   return (

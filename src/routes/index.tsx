@@ -9,13 +9,11 @@ import MusicPlayer from "@/components/MusicPlayer";
 import { FloralCorner } from "@/components/FloralCorner";
 import { useServerFn } from "@tanstack/react-start";
 import { appendToSheet } from "@/lib/sheets.functions";
-import coupleAsset from "@/assets/couple-jaba-elene.jpg.asset.json";
-
 const panelImg = "/images/panel.webp";
 const bowImg = "/images/bow.webp";
 const archImg = "/images/arch.webp";
 const envelopeImg = "/images/envelope-olive.webp";
-const coupleImg = coupleAsset.url;
+const coupleImg = "/images/couple-jaba-elene.jpg";
 
 const WEDDING_DATE = new Date("2026-10-27T13:00:00+04:00");
 
@@ -351,23 +349,13 @@ function CoupleImage() {
 }
 
 
-const COMPANIONS = ["მარტო მოვდივარ", "მეუღლე / პარტნიორი", "შვილები", "მეგობარი", "ოჯახის წევრები"];
-
 function RsvpForm({ onSent }: { onSent: () => void }) {
   const send = useServerFn(appendToSheet);
   const [name, setName] = useState("");
   const [status, setStatus] = useState<"attending" | "declined">("attending");
-  const [withWhom, setWithWhom] = useState<string[]>([]);
   const [guests, setGuests] = useState("1");
-  const [guestNames, setGuestNames] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  function toggle(option: string) {
-    setWithWhom((prev) =>
-      prev.includes(option) ? prev.filter((o) => o !== option) : [...prev, option],
-    );
-  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -385,9 +373,7 @@ function RsvpForm({ onSent }: { onSent: () => void }) {
           values: [
             fullName,
             status === "attending" ? "მოდის" : "ვერ მოდის",
-            status === "attending" ? withWhom.join(", ") : "",
             status === "attending" ? guests : "0",
-            status === "attending" ? guestNames.trim() : "",
           ],
         },
       });
@@ -434,65 +420,23 @@ function RsvpForm({ onSent }: { onSent: () => void }) {
       </div>
 
       {status === "attending" && (
-        <>
-          <fieldset>
-            <legend className="font-geo text-xs tracking-[0.2em] text-ink/60">
-              ვისთან ერთად მოდიხართ? (შეგიძლიათ რამდენიმეს მონიშვნა)
-            </legend>
-            <div className="mt-2 grid gap-2 sm:grid-cols-2">
-              {COMPANIONS.map((option) => (
-                <label
-                  key={option}
-                  className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2.5 font-geo text-sm transition ${
-                    withWhom.includes(option)
-                      ? "border-wine bg-wine/10 text-ink"
-                      : "border-ink/15 bg-parchment text-ink/75"
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={withWhom.includes(option)}
-                    onChange={() => toggle(option)}
-                    className="h-4 w-4 accent-[oklch(0.45_0.07_140)]"
-                  />
-                  {option}
-                </label>
-              ))}
-            </div>
-          </fieldset>
-
-          <div>
-            <label htmlFor="guests" className="font-geo text-xs tracking-[0.2em] text-ink/60">
-              სულ რამდენი სტუმარი (თქვენ ჩათვლით)
-            </label>
-            <select
-              id="guests"
-              value={guests}
-              onChange={(e) => setGuests(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-ink/15 bg-parchment px-4 py-3 font-geo text-sm text-ink outline-none focus:border-wine"
-            >
-              {["1", "2", "3", "4", "5", "6"].map((n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="guestNames" className="font-geo text-xs tracking-[0.2em] text-ink/60">
-              თანმხლები სტუმრების სახელები
-            </label>
-            <textarea
-              id="guestNames"
-              rows={2}
-              maxLength={300}
-              value={guestNames}
-              onChange={(e) => setGuestNames(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-ink/15 bg-parchment px-4 py-3 font-geo text-sm text-ink outline-none focus:border-wine"
-            />
-          </div>
-        </>
+        <div>
+          <label htmlFor="guests" className="font-geo text-xs tracking-[0.2em] text-ink/60">
+            რამდენი ადამიანი მოდის (თქვენ ჩათვლით)
+          </label>
+          <select
+            id="guests"
+            value={guests}
+            onChange={(e) => setGuests(e.target.value)}
+            className="mt-1 w-full rounded-lg border border-ink/15 bg-parchment px-4 py-3 font-geo text-sm text-ink outline-none focus:border-wine"
+          >
+            {["1", "2", "3", "4", "5+"].map((n) => (
+              <option key={n} value={n}>
+                {n}
+              </option>
+            ))}
+          </select>
+        </div>
       )}
 
       {error && <p className="font-geo text-xs text-wine">{error}</p>}

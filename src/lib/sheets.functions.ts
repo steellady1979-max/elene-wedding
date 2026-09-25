@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 const SHEET_WEBHOOK_URL =
-  "https://script.google.com/macros/s/AKfycbwvv0iHtsiDid1iN9-8TYSTV0B08bQtrKmj_TgWEhvbtrkoWII64a7qyv5UdrFfgfq44g/exec";
+  "https://script.google.com/macros/s/AKfycbxD3ZaLf6WB1zt1XcveZSA9IucnwJLNQvcFlW69SfzszeVHBp5KPSslH1OKNC_RAcaSoA/exec";
 
 const wish = z.object({
   name: z.string(),

@@ -524,7 +524,7 @@ function RsvpForm({
                 className="mt-1 w-full resize-y rounded-lg border border-ink/15 bg-parchment px-4 py-3 font-geo text-sm text-ink outline-none placeholder:text-ink/35 focus:border-wine"
               />
               <p className="mt-1 font-geo text-[0.68rem] text-ink/50">
-                ჩაწერეთ ყველა თანმხლები სტუმარი, თითოეული ახალ ხაზზე.
+                ჩაწერეთ მათი სახელი/გვარი
               </p>
             </div>
           )}

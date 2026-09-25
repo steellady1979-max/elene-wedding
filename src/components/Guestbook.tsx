@@ -18,6 +18,7 @@ export function Guestbook() {
   const [nameInput, setNameInput] = useState("");
   const [textInput, setTextInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const sendToSheet = useServerFn(appendToSheet);
 
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -62,6 +63,14 @@ export function Guestbook() {
         alert("ბაზის შეცდომა: " + error.message);
         setLoading(false);
         return;
+      }
+
+      try {
+        await sendToSheet({
+          data: { sheet: "Wishes" as const, values: [nameInput.trim(), textInput.trim()] },
+        });
+      } catch (sheetErr) {
+        console.error("Sheet mirror failed:", sheetErr);
       }
 
       alert("სურვილი წარმატებით გაიგზავნა!");

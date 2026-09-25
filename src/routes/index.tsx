@@ -410,6 +410,7 @@ function RsvpForm({
   const [name, setName] = useState("");
   const [status, setStatus] = useState<"attending" | "declined">("attending");
   const [guests, setGuests] = useState("1");
+  const [companionNames, setCompanionNames] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -418,6 +419,11 @@ function RsvpForm({
     const fullName = name.trim();
     if (fullName.length < 2 || fullName.length > 120) {
       setError("გთხოვთ, მიუთითოთ სახელი და გვარი");
+      return;
+    }
+    const companions = companionNames.trim();
+    if (status === "attending" && guests !== "1" && companions.length < 2) {
+      setError("გთხოვთ, მიუთითოთ თანმხლები სტუმრების სახელები");
       return;
     }
     setBusy(true);
@@ -430,6 +436,7 @@ function RsvpForm({
             fullName,
             status === "attending" ? "მოდის" : "ვერ მოდის",
             status === "attending" ? guests : "0",
+            status === "attending" && guests !== "1" ? companions : "",
           ],
         },
       });
@@ -476,23 +483,52 @@ function RsvpForm({
       </div>
 
       {status === "attending" && (
-        <div>
-          <label htmlFor="guests" className="font-geo text-xs tracking-[0.2em] text-ink/60">
-            რამდენი ადამიანი მოდის (თქვენი ჩათვლით)
-          </label>
-          <select
-            id="guests"
-            value={guests}
-            onChange={(e) => setGuests(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-ink/15 bg-parchment px-4 py-3 font-geo text-sm text-ink outline-none focus:border-wine"
-          >
-            {["1", "2", "3", "4", "5+"].map((n) => (
-              <option key={n} value={n}>
-                {n}
-              </option>
-            ))}
-          </select>
-        </div>
+        <>
+          <div>
+            <label htmlFor="guests" className="font-geo text-xs tracking-[0.2em] text-ink/60">
+              რამდენი ადამიანი მოდის (თქვენი ჩათვლით)
+            </label>
+            <select
+              id="guests"
+              value={guests}
+              onChange={(e) => {
+                setGuests(e.target.value);
+                if (e.target.value === "1") setCompanionNames("");
+              }}
+              className="mt-1 w-full rounded-lg border border-ink/15 bg-parchment px-4 py-3 font-geo text-sm text-ink outline-none focus:border-wine"
+            >
+              {["1", "2", "3", "4", "5+"].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {guests !== "1" && (
+            <div>
+              <label
+                htmlFor="companionNames"
+                className="font-geo text-xs tracking-[0.2em] text-ink/60"
+              >
+                თანმხლები სტუმრების სახელები
+              </label>
+              <textarea
+                id="companionNames"
+                required
+                rows={Math.min(Number.parseInt(guests, 10) || 5, 5)}
+                maxLength={500}
+                value={companionNames}
+                onChange={(e) => setCompanionNames(e.target.value)}
+                placeholder="თითო სახელი და გვარი ახალ ხაზზე"
+                className="mt-1 w-full resize-y rounded-lg border border-ink/15 bg-parchment px-4 py-3 font-geo text-sm text-ink outline-none placeholder:text-ink/35 focus:border-wine"
+              />
+              <p className="mt-1 font-geo text-[0.68rem] text-ink/50">
+                ჩაწერეთ ყველა თანმხლები სტუმარი, თითოეული ახალ ხაზზე.
+              </p>
+            </div>
+          )}
+        </>
       )}
 
       {error && <p className="font-geo text-xs text-wine">{error}</p>}

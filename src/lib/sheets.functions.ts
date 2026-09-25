@@ -1,6 +1,15 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+const SHEET_WEBHOOK_URL =
+  "https://script.google.com/macros/s/AKfycbwvv0iHtsiDid1iN9-8TYSTV0B08bQtrKmj_TgWEhvbtrkoWII64a7qyv5UdrFfgfq44g/exec";
+
+const wish = z.object({
+  name: z.string(),
+  message: z.string(),
+  timestamp: z.string().optional(),
+});
+
 const payload = (input: unknown) =>
   z
     .object({
@@ -11,15 +20,12 @@ const payload = (input: unknown) =>
 
 /**
  * Sends a row to the Google Sheet through a Google Apps Script Web App.
- * Set the SHEET_WEBHOOK_URL secret to the deployed /exec URL.
+ * The webhook URL is server-side only and is shared by both forms.
  */
 export const appendToSheet = createServerFn({ method: "POST" })
-  .inputValidator(payload)
+  .validator(payload)
   .handler(async ({ data }) => {
-    const url = process.env["SHEET_WEBHOOK_URL"];
-    if (!url) return { ok: false as const, reason: "not_configured" as const };
-
-    const res = await fetch(url, {
+    const res = await fetch(SHEET_WEBHOOK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -30,11 +36,40 @@ export const appendToSheet = createServerFn({ method: "POST" })
       redirect: "follow",
     });
 
-    if (!res.ok) {
-      const body = await res.text();
+    const body = await res.text();
+    let result: { ok?: boolean; error?: string } = {};
+    try {
+      result = JSON.parse(body) as { ok?: boolean; error?: string };
+    } catch {
+      // A non-JSON response is a provider error even when the HTTP status is 200.
+    }
+
+    if (!res.ok || result.ok !== true) {
       console.error(`Sheet webhook failed [${res.status}]: ${body}`);
       return { ok: false as const, reason: "provider_error" as const };
     }
 
     return { ok: true as const };
   });
+
+/** Loads public guestbook entries from the same Apps Script web app. */
+export const getWishes = createServerFn({ method: "GET" }).handler(async () => {
+  try {
+    const endpoint = new URL(SHEET_WEBHOOK_URL);
+    endpoint.searchParams.set("action", "wishes");
+
+    const res = await fetch(endpoint, { redirect: "follow" });
+    if (!res.ok) return { ok: false as const, wishes: [] };
+
+    const parsed = z
+      .object({ ok: z.literal(true), wishes: z.array(wish).max(500) })
+      .safeParse(await res.json());
+
+    return parsed.success
+      ? { ok: true as const, wishes: parsed.data.wishes }
+      : { ok: false as const, wishes: [] };
+  } catch (error) {
+    console.error("Failed to load wishes from Google Sheets:", error);
+    return { ok: false as const, wishes: [] };
+  }
+});

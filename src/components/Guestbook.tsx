@@ -3,8 +3,7 @@ import { ChevronLeft, ChevronRight, PenLine } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { Reveal } from "@/components/Reveal";
 import { SparkleTitle } from "@/components/SparkleTitle";
-import { supabase } from "@/integrations/supabase/client";
-import { appendToSheet } from "@/lib/sheets.functions";
+import { appendToSheet, getWishes } from "@/lib/sheets.functions";
 
 type Entry = { text: string; name: string };
 
@@ -14,37 +13,29 @@ export function Guestbook() {
   const [flip, setFlip] = useState<null | { dir: 1 | -1; from: number; to: number }>(null);
   const [paused, setPaused] = useState(false);
   const [writing, setWriting] = useState(false);
-  
+
   const [nameInput, setNameInput] = useState("");
   const [textInput, setTextInput] = useState("");
   const [loading, setLoading] = useState(false);
   const sendToSheet = useServerFn(appendToSheet);
+  const loadWishes = useServerFn(getWishes);
 
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const fetchWishes = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("wishes")
-        .select("full_name, message, created_at")
-        .order("created_at", { ascending: true });
-
-      if (error) {
-        console.error("Supabase fetch error:", error.message);
-        return;
-      }
-
-      if (data && data.length > 0) {
-        setEntries(data.map(item => ({ name: item.full_name, text: item.message })));
-      }
-    } catch (err) {
-      console.error("Fetch exception:", err);
-    }
-  };
-
   useEffect(() => {
+    async function fetchWishes() {
+      try {
+        const result = await loadWishes();
+        if (result.ok) {
+          setEntries(result.wishes.map((item) => ({ name: item.name, text: item.message })));
+        }
+      } catch (err) {
+        console.error("Failed to load wishes:", err);
+      }
+    }
+
     void fetchWishes();
-  }, []);
+  }, [loadWishes]);
 
   const handleSendClick = async () => {
     if (!nameInput.trim() || !textInput.trim()) {
@@ -54,32 +45,21 @@ export function Guestbook() {
 
     setLoading(true);
     try {
-      console.log("Sending data to Supabase...", { nameInput, textInput });
-      const { error } = await supabase
-        .from("wishes")
-        .insert([{ full_name: nameInput.trim(), message: textInput.trim() }]);
-
-      if (error) {
-        alert("ბაზის შეცდომა: " + error.message);
-        setLoading(false);
-        return;
-      }
-
-      try {
-        await sendToSheet({
-          data: { sheet: "Wishes" as const, values: [nameInput.trim(), textInput.trim()] },
-        });
-      } catch (sheetErr) {
-        console.error("Sheet mirror failed:", sheetErr);
-      }
+      const name = nameInput.trim();
+      const message = textInput.trim();
+      const result = await sendToSheet({
+        data: { sheet: "Wishes" as const, values: [name, message] },
+      });
+      if (!result.ok) throw new Error(result.reason);
 
       alert("სურვილი წარმატებით გაიგზავნა!");
+      setEntries((current) => [...current, { name, text: message }]);
       setNameInput("");
       setTextInput("");
       setWriting(false);
-      await fetchWishes();
-    } catch (err: any) {
-      alert("კრიტიკული შეცდომა: " + (err?.message || "უცნობი"));
+    } catch (err) {
+      console.error("Wish submission failed:", err);
+      alert("ვერ გაიგზავნა, სცადეთ ხელახლა");
     } finally {
       setLoading(false);
     }
@@ -106,8 +86,17 @@ export function Guestbook() {
   );
 
   useEffect(() => {
-    if (paused || writing || total < 2 || flip || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = setInterval(() => { if (!document.hidden) turn(1); }, 6000);
+    if (
+      paused ||
+      writing ||
+      total < 2 ||
+      flip ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    )
+      return;
+    const id = setInterval(() => {
+      if (!document.hidden) turn(1);
+    }, 6000);
     return () => clearInterval(id);
   }, [paused, writing, total, flip, turn]);
 
@@ -119,8 +108,20 @@ export function Guestbook() {
   return (
     <section className="guestbook-garden bg-backdrop px-4 py-20 sm:px-6">
       <div className="guestbook-flowers" aria-hidden="true">
-        <img className="guestbook-lily guestbook-lily-left" src="/images/guestbook-white-lilies.webp" alt="" loading="lazy" decoding="async" />
-        <img className="guestbook-lily guestbook-lily-right" src="/images/guestbook-white-lilies.webp" alt="" loading="lazy" decoding="async" />
+        <img
+          className="guestbook-lily guestbook-lily-left"
+          src="/images/guestbook-white-lilies.webp"
+          alt=""
+          loading="lazy"
+          decoding="async"
+        />
+        <img
+          className="guestbook-lily guestbook-lily-right"
+          src="/images/guestbook-white-lilies.webp"
+          alt=""
+          loading="lazy"
+          decoding="async"
+        />
       </div>
       <div className="relative z-10 mx-auto max-w-4xl text-center">
         <Reveal>

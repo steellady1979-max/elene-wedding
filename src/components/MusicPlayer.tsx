@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { LoaderCircle, Volume2, VolumeX } from "lucide-react";
 
-const VIDEO_ID = "vGJTaP6anOU";
+const VIDEO_ID = "o_1aF54DO60";
 type Player = {
   playVideo: () => void; pauseVideo: () => void; unMute: () => void;
   setVolume: (volume: number) => void; destroy: () => void;

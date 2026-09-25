@@ -48,7 +48,7 @@ function Invitation() {
 
   return (
     <main className="relative min-h-screen bg-backdrop">
-      <h1 className="sr-only">ლაშა და მარიამი — ქორწილის მოწვევა, 15 ოქტომბერი, 2026</h1>
+      <h1 className="sr-only">ჯაბა და ელენე — ქორწილის მოწვევა, 27 ოქტომბერი, 2026</h1>
 
       <div
         inert={!open}
@@ -136,14 +136,14 @@ function Hero() {
       />
       <div className="relative z-10 flex flex-col items-center px-8 text-center">
         <SparkleTitle as="p" shimmer={false} className="font-geo text-[13vw] leading-[1.1] sm:text-6xl">
-          ლაშა
+          ჯაბა
         </SparkleTitle>
         <p className="my-1 font-geo text-2xl text-ink/70">&amp;</p>
         <SparkleTitle as="p" shimmer={false} className="font-geo text-[13vw] leading-[1.1] sm:text-6xl">
-          მარიამი
+          ელენე
         </SparkleTitle>
         <div className="mt-8 rounded-full bg-parchment/70 px-6 py-3 backdrop-blur-[2px]">
-          <p className="font-geo text-sm tracking-[0.3em] text-ink/85">15 ოქტომბერი, 2026</p>
+          <p className="font-geo text-sm tracking-[0.3em] text-ink/85">27 ოქტომბერი, 2026</p>
         </div>
 
         <Countdown />
@@ -229,7 +229,7 @@ function EnvelopeSection() {
                   className="mt-2 font-geo text-[0.9rem] leading-[1.95] text-ink/85"
                 />
                 <Typewriter
-                  text="ლაშა & მარიამი"
+                  text="ჯაბა & ელენე"
                   speed={55}
                   startDelay={9000}
                   className="mt-4 font-geo text-[0.9rem] text-ink/70"
@@ -338,10 +338,10 @@ function CoupleImage() {
         <figure className="mx-auto w-full max-w-md">
           <img
             src={coupleImg}
-            alt="აკვარელით დახატული ლაშა და მარიამი ყვავილებით"
+            alt="აკვარელით დახატული ჯაბა და ელენე"
             loading="lazy"
-            width={1079}
-            height={1332}
+            width={1024}
+            height={1024}
             className="mx-auto block h-auto w-full rounded-2xl border border-ink/10 object-cover shadow-soft"
           />
         </figure>

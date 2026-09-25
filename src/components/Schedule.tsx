@@ -1,38 +1,51 @@
 import { Reveal } from "./Reveal";
 
 import { SparkleTitle } from "./SparkleTitle";
-import { Church, MapPin, PenLine, UtensilsCrossed } from "lucide-react";
+import { Camera, Church, MapPin, UtensilsCrossed } from "lucide-react";
+import writersHouse from "@/assets/writers-house.jpg.asset.json";
+import sioni from "@/assets/sioni.jpg.asset.json";
+import lisiMere from "@/assets/lisi-mere.jpg.asset.json";
 
-const CHURCH_MAP =
-  "https://www.google.com/maps/place/%E1%83%A1%E1%83%95%E1%83%94%E1%83%A2%E1%83%98%E1%83%AA%E1%83%AE%E1%83%9D%E1%83%95%E1%83%9A%E1%83%98%E1%83%A1+%E1%83%A1%E1%83%90%E1%83%99%E1%83%90%E1%83%97%E1%83%94%E1%83%93%E1%83%A0%E1%83%9D+%E1%83%A2%E1%83%90%E1%83%AB%E1%83%90%E1%83%A0%E1%83%98/@41.8422257,44.720956,17z";
-const VENUE_MAP =
-  "https://www.google.com/maps/place/%E1%83%A4%E1%83%A3%E1%83%A0%E1%83%A8%E1%83%94%E1%83%A2%E1%83%98%E1%83%9C%E1%83%9D+%E1%83%90%E1%83%92%E1%83%90%E1%83%A0%E1%83%90%E1%83%99%E1%83%96%E1%83%94/data=!4m2!3m1!1s0x40445f7bb5e37c51:0x4f341e9b0cea6e95";
+const WRITERS_HOUSE_MAP =
+  "https://www.google.com/maps/place/Writers'+House+of+Georgia/@41.6902356,44.7971553,650m/data=!3m2!1e3!4b1!4m6!3m5!1s0x40440cf20e8d460d:0xedb1bb704c7c475e!8m2!3d41.6902356!4d44.7997302!16s%2Fg%2F11c6z6r18f";
+const SIONI_MAP =
+  "https://www.google.com/maps/place/Sioni+Church/@41.6902356,44.7971553,650m/data=!3m1!1e3!4m6!3m5!1s0x40440d0079a63b3f:0xd68818f2272b606d!8m2!3d41.6913325!4d44.8074476!16s%2Fg%2F11z5v57p68";
+const LISI_MAP =
+  "https://www.google.com/maps/place/Lisi+Mere/@41.7492613,44.682438,650m/data=!3m2!1e3!4b1!4m6!3m5!1s0x404473d22f726ca1:0x29a77e334817e08e!8m2!3d41.7492613!4d44.6850129!16s%2Fg%2F11fb0849g8";
 
 const ITEMS = [
   {
-    time: "15:30",
+    time: "13:00",
+    icon: Camera,
+    title: "ფოტოსესია",
+    place: "მწერალთა სახლი",
+    map: WRITERS_HOUSE_MAP,
+    image: writersHouse.url,
+    width: 1024,
+    height: 768,
+    alt: "მწერალთა სახლის აკვარელი",
+  },
+  {
+    time: "15:00",
     icon: Church,
     title: "ჯვრისწერა",
-    place: "სვეტიცხოვლის საკათედრო ტაძარი",
-    map: CHURCH_MAP,
-    image: "/images/svetitskhoveli.webp", width: 1024, height: 768,
-    alt: "სვეტიცხოვლის საკათედრო ტაძრის აკვარელი",
+    place: "სიონის ტაძარი",
+    map: SIONI_MAP,
+    image: sioni.url,
+    width: 1366,
+    height: 768,
+    alt: "სიონის ტაძრის აკვარელი",
   },
   {
-    time: "17:30",
-    icon: PenLine,
-    title: "ხელის მოწერა",
-    place: "ფურშეტინო აგარაკი",
-    map: VENUE_MAP,
-    image: "/images/furshetino-signing.webp", width: 1302, height: 800,
-    alt: "ფურშეტინო აგარაკის საქორწილო გაფორმების აკვარელი",
-  },
-  {
-    time: "18:00",
+    time: "17:00",
     icon: UtensilsCrossed,
     title: "ვახშამი",
-    place: "ფურშეტინო აგარაკი",
-    map: VENUE_MAP,
+    place: "ლისი მერე",
+    map: LISI_MAP,
+    image: lisiMere.url,
+    width: 682,
+    height: 1024,
+    alt: "ლისი მერეს საქორწილო დარბაზის აკვარელი",
   },
 ];
 

@@ -223,7 +223,7 @@ export function Guestbook() {
                 <button
                   type="button"
                   onClick={() => setWriting(false)}
-                  className="rounded-full border border-ink/20 px-7 py-2.5 font-geo text-xs tracking-[0.2em] text-ink/70 transition hover:bg-ink/5"
+                  className="rounded-full border border-parchment bg-parchment px-7 py-2.5 font-geo text-xs font-semibold tracking-[0.2em] text-wine shadow-soft transition hover:-translate-y-0.5 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-parchment"
                 >
                   გაუქმება
                 </button>

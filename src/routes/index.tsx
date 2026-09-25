@@ -9,6 +9,7 @@ import MusicPlayer from "@/components/MusicPlayer";
 import { FloralCorner } from "@/components/FloralCorner";
 import { useServerFn } from "@tanstack/react-start";
 import { appendToSheet } from "@/lib/sheets.functions";
+import { CalendarPlus } from "lucide-react";
 const panelImg = "/images/panel.webp";
 const bowImg = "/images/bow.webp";
 const archImg = "/images/arch.webp";
@@ -17,6 +18,21 @@ const coupleImg = "/images/couple-jaba-elene.jpg";
 
 const WEDDING_DATE = new Date("2026-10-27T13:00:00+04:00");
 
+const GOOGLE_CALENDAR_URL =
+  "https://calendar.google.com/calendar/render?" +
+  new URLSearchParams({
+    action: "TEMPLATE",
+    text: "ჯაბა & ელენე — ქორწილი",
+    dates: "20261027T090000Z/20261027T180000Z",
+    ctz: "Asia/Tbilisi",
+    location: "თბილისი, საქართველო",
+    details: [
+      "ჯაბა და ელენეს ქორწილი — 27 ოქტომბერი, 2026",
+      "13:00 — ფოტოსესია, მწერალთა სახლი",
+      "15:00 — ჯვრისწერა, სიონის ტაძარი",
+      "17:00 — ვახშამი, ლისი მერე",
+    ].join("\n"),
+  }).toString();
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -62,7 +78,6 @@ function Invitation() {
         <Rsvp />
       </div>
 
-
       {/* Doors */}
       <div
         className={`fixed inset-0 z-40 transition-opacity duration-700 ${
@@ -73,7 +88,10 @@ function Invitation() {
         aria-label="მოწვევის გახსნა"
         onClick={openCard}
         onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openCard(); }
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            openCard();
+          }
         }}
         onTouchStart={(e) => (startX.current = e.touches[0]!.clientX)}
         onTouchMove={(e) => {
@@ -85,7 +103,9 @@ function Invitation() {
         <Door side="right" open={open} />
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <img
-            src={bowImg} fetchPriority="high" decoding="async"
+            src={bowImg}
+            fetchPriority="high"
+            decoding="async"
             alt="თეთრი შიფონის ბაფთა"
             width={1024}
             height={1536}
@@ -112,7 +132,9 @@ function Door({ side, open }: { side: "left" | "right"; open: boolean }) {
       aria-hidden="true"
     >
       <img
-        src={panelImg} fetchPriority="high" decoding="async"
+        src={panelImg}
+        fetchPriority="high"
+        decoding="async"
         alt=""
         width={1024}
         height={1920}
@@ -128,16 +150,25 @@ function Hero() {
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
       <img
-        src={archImg} decoding="async"
+        src={archImg}
+        decoding="async"
         alt="აკვარელით დახატული თაღი ლაგო დი კომოს ხედით"
         className="absolute inset-0 h-full w-full object-cover"
       />
       <div className="relative z-10 flex flex-col items-center px-8 text-center">
-        <SparkleTitle as="p" shimmer={false} className="font-geo text-[13vw] leading-[1.1] sm:text-6xl">
+        <SparkleTitle
+          as="p"
+          shimmer={false}
+          className="font-geo text-[13vw] leading-[1.1] sm:text-6xl"
+        >
           ჯაბა
         </SparkleTitle>
         <p className="my-1 font-geo text-2xl text-ink/70">&amp;</p>
-        <SparkleTitle as="p" shimmer={false} className="font-geo text-[13vw] leading-[1.1] sm:text-6xl">
+        <SparkleTitle
+          as="p"
+          shimmer={false}
+          className="font-geo text-[13vw] leading-[1.1] sm:text-6xl"
+        >
           ელენე
         </SparkleTitle>
         <div className="mt-8 rounded-full bg-parchment/70 px-6 py-3 backdrop-blur-[2px]">
@@ -181,11 +212,14 @@ function EnvelopeSection() {
   return (
     <section className="relative flex flex-col items-center overflow-hidden bg-parchment px-6 pb-24 pt-24">
       <FloralCorner className="left-0 top-0 w-[36%] max-w-[10rem] sm:left-[-8%] sm:top-2 sm:w-[46%] sm:max-w-[16rem]" />
-      <FloralCorner className="right-0 top-0 w-[36%] max-w-[10rem] sm:right-[-8%] sm:top-2 sm:w-[46%] sm:max-w-[16rem]" flip level="medium" />
+      <FloralCorner
+        className="right-0 top-0 w-[36%] max-w-[10rem] sm:right-[-8%] sm:top-2 sm:w-[46%] sm:max-w-[16rem]"
+        flip
+        level="medium"
+      />
       <p className="relative z-10 mb-8 font-geo text-xs tracking-[0.35em] text-ink/55">
         {opened ? "ჩვენი სიტყვები" : "შეეხე კონვერტს"}
       </p>
-
 
       <div
         className={`w-full max-w-md transition-all duration-[1200ms] ease-out ${
@@ -201,7 +235,11 @@ function EnvelopeSection() {
         >
           {/* back of envelope */}
           <img
-            src={envelopeImg} width={1024} height={768} loading="lazy" decoding="async"
+            src={envelopeImg}
+            width={1024}
+            height={768}
+            loading="lazy"
+            decoding="async"
             alt="ოლივისფერი კონვერტი ოქროსფერი ბეჭდით"
             className="relative z-0 w-full drop-shadow-[0_20px_35px_rgba(90,74,56,0.25)]"
           />
@@ -277,16 +315,17 @@ function EnvelopeSection() {
               }}
             />
           </div>
-
         </button>
       </div>
     </section>
   );
 }
 
-
 function Rsvp() {
-  const [sent, setSent] = useState(false);
+  const [response, setResponse] = useState<{
+    name: string;
+    status: "attending" | "declined";
+  } | null>(null);
   return (
     <section className="relative overflow-hidden bg-parchment px-6 py-20">
       <img
@@ -305,7 +344,6 @@ function Rsvp() {
       />
 
       <div className="relative z-10 mx-auto max-w-xl text-center">
-
         <Reveal>
           <SparkleTitle className="font-geo text-2xl">დასტურის ფორმა</SparkleTitle>
         </Reveal>
@@ -317,12 +355,27 @@ function Rsvp() {
           />
         </div>
 
-        {sent ? (
-          <p className="mt-10 font-geo text-lg text-ink">
-            მადლობა! თქვენი პასუხი წარმატებით გაიგზავნა ✨
-          </p>
+        {response ? (
+          <div className="mt-10 flex flex-col items-center gap-5">
+            <p className="font-geo text-lg leading-relaxed text-ink">
+              {response.status === "attending"
+                ? `მადლობა, ${response.name}! გელოდებით დიდი სიყვარულით. ✨`
+                : `${response.name}, მადლობა პასუხისთვის.`}
+            </p>
+            {response.status === "attending" && (
+              <a
+                href={GOOGLE_CALENDAR_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-wine px-7 py-3 font-geo text-sm tracking-[0.12em] text-parchment shadow-soft transition hover:-translate-y-0.5 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-wine"
+              >
+                <CalendarPlus className="h-4 w-4" strokeWidth={1.7} />
+                დაამატე კალენდარში
+              </a>
+            )}
+          </div>
         ) : (
-          <RsvpForm onSent={() => setSent(true)} />
+          <RsvpForm onSent={setResponse} />
         )}
       </div>
     </section>
@@ -348,8 +401,11 @@ function CoupleImage() {
   );
 }
 
-
-function RsvpForm({ onSent }: { onSent: () => void }) {
+function RsvpForm({
+  onSent,
+}: {
+  onSent: (response: { name: string; status: "attending" | "declined" }) => void;
+}) {
   const send = useServerFn(appendToSheet);
   const [name, setName] = useState("");
   const [status, setStatus] = useState<"attending" | "declined">("attending");
@@ -378,7 +434,7 @@ function RsvpForm({ onSent }: { onSent: () => void }) {
         },
       });
       if (!res.ok) throw new Error(res.reason);
-      onSent();
+      onSent({ name: fullName, status });
     } catch {
       setError("ვერ გაიგზავნა, სცადეთ ხელახლა");
     } finally {

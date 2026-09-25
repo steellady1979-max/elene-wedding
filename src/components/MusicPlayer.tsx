@@ -62,7 +62,7 @@ export default function MusicPlayer() {
       player.current = new window.YT.Player(mount, {
         videoId: VIDEO_ID, width: 200, height: 200,
         // Muted autoplay is allowed by browsers; sound is added on first touch.
-        playerVars: { autoplay: 1, mute: 1, controls: 0, playsinline: 1, loop: 1, playlist: VIDEO_ID, origin: window.location.origin },
+        playerVars: { autoplay: 1, mute: 1, controls: 0, playsinline: 1, loop: 1, playlist: VIDEO_ID, start: 15, origin: window.location.origin },
         events: {
           onReady: ({ target }) => {
             if (cancelled) return;

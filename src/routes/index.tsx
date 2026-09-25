@@ -422,7 +422,7 @@ function RsvpForm({ onSent }: { onSent: () => void }) {
       {status === "attending" && (
         <div>
           <label htmlFor="guests" className="font-geo text-xs tracking-[0.2em] text-ink/60">
-            რამდენი ადამიანი მოდის (თქვენ ჩათვლით)
+            რამდენი ადამიანი მოდის (თქვენი ჩათვლით)
           </label>
           <select
             id="guests"

@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, PenLine } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
 import { Reveal } from "@/components/Reveal";
 import { SparkleTitle } from "@/components/SparkleTitle";
 import { supabase } from "@/integrations/supabase/client";
+import { appendToSheet } from "@/lib/sheets.functions";
 
 type Entry = { text: string; name: string };
 

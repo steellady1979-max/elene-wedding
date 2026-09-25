@@ -7,32 +7,32 @@ import { Schedule } from "@/components/Schedule";
 import { Guestbook } from "@/components/Guestbook";
 import MusicPlayer from "@/components/MusicPlayer";
 import { FloralCorner } from "@/components/FloralCorner";
-import { supabase } from "@/integrations/supabase/client";
-
-
+import { useServerFn } from "@tanstack/react-start";
+import { appendToSheet } from "@/lib/sheets.functions";
+import coupleAsset from "@/assets/couple-jaba-elene.jpg.asset.json";
 
 const panelImg = "/images/panel.webp";
 const bowImg = "/images/bow.webp";
 const archImg = "/images/arch.webp";
 const envelopeImg = "/images/envelope-olive.webp";
-const coupleImg = "/images/couple.webp";
+const coupleImg = coupleAsset.url;
 
-const WEDDING_DATE = new Date("2026-10-15T15:30:00+04:00");
+const WEDDING_DATE = new Date("2026-10-27T13:00:00+04:00");
 
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "ლაშა & მარიამი — ქორწილის მოწვევა" },
+      { title: "ჯაბა & ელენე — ქორწილის მოწვევა" },
       {
         name: "description",
         content:
-          "ლაშა და მარიამი გეპატიჟებიან 15 ოქტომბერს, 2026 — განრიგი, დრესკოდი, ლოკაცია და RSVP.",
+          "ჯაბა და ელენე გეპატიჟებიან 27 ოქტომბერს, 2026 — დღის განრიგი, ლოკაციები და დასტურის ფორმა.",
       },
-      { property: "og:title", content: "ლაშა & მარიამი — 15 ოქტომბერი, 2026" },
+      { property: "og:title", content: "ჯაბა & ელენე — 27 ოქტომბერი, 2026" },
       {
         property: "og:description",
-        content: "ინტერაქტიული ქორწილის მოწვევა — განრიგი, ლოკაცია და RSVP.",
+        content: "ინტერაქტიული ქორწილის მოწვევა — განრიგი, ლოკაცია და დასტური.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -48,7 +48,7 @@ function Invitation() {
 
   return (
     <main className="relative min-h-screen bg-backdrop">
-      <h1 className="sr-only">ლაშა და მარიამი — ქორწილის მოწვევა, 15 ოქტომბერი, 2026</h1>
+      <h1 className="sr-only">ჯაბა და ელენე — ქორწილის მოწვევა, 27 ოქტომბერი, 2026</h1>
 
       <div
         inert={!open}
@@ -136,14 +136,14 @@ function Hero() {
       />
       <div className="relative z-10 flex flex-col items-center px-8 text-center">
         <SparkleTitle as="p" shimmer={false} className="font-geo text-[13vw] leading-[1.1] sm:text-6xl">
-          ლაშა
+          ჯაბა
         </SparkleTitle>
         <p className="my-1 font-geo text-2xl text-ink/70">&amp;</p>
         <SparkleTitle as="p" shimmer={false} className="font-geo text-[13vw] leading-[1.1] sm:text-6xl">
-          მარიამი
+          ელენე
         </SparkleTitle>
         <div className="mt-8 rounded-full bg-parchment/70 px-6 py-3 backdrop-blur-[2px]">
-          <p className="font-geo text-sm tracking-[0.3em] text-ink/85">15 ოქტომბერი, 2026</p>
+          <p className="font-geo text-sm tracking-[0.3em] text-ink/85">27 ოქტომბერი, 2026</p>
         </div>
 
         <Countdown />
@@ -229,7 +229,7 @@ function EnvelopeSection() {
                   className="mt-2 font-geo text-[0.9rem] leading-[1.95] text-ink/85"
                 />
                 <Typewriter
-                  text="ლაშა & მარიამი"
+                  text="ჯაბა & ელენე"
                   speed={55}
                   startDelay={9000}
                   className="mt-4 font-geo text-[0.9rem] text-ink/70"
@@ -338,10 +338,10 @@ function CoupleImage() {
         <figure className="mx-auto w-full max-w-md">
           <img
             src={coupleImg}
-            alt="აკვარელით დახატული ლაშა და მარიამი ყვავილებით"
+            alt="აკვარელით დახატული ჯაბა და ელენე"
             loading="lazy"
-            width={1079}
-            height={1332}
+            width={1024}
+            height={1024}
             className="mx-auto block h-auto w-full rounded-2xl border border-ink/10 object-cover shadow-soft"
           />
         </figure>
@@ -351,11 +351,23 @@ function CoupleImage() {
 }
 
 
+const COMPANIONS = ["მარტო მოვდივარ", "მეუღლე / პარტნიორი", "შვილები", "მეგობარი", "ოჯახის წევრები"];
+
 function RsvpForm({ onSent }: { onSent: () => void }) {
+  const send = useServerFn(appendToSheet);
   const [name, setName] = useState("");
   const [status, setStatus] = useState<"attending" | "declined">("attending");
+  const [withWhom, setWithWhom] = useState<string[]>([]);
+  const [guests, setGuests] = useState("1");
+  const [guestNames, setGuestNames] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  function toggle(option: string) {
+    setWithWhom((prev) =>
+      prev.includes(option) ? prev.filter((o) => o !== option) : [...prev, option],
+    );
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -367,12 +379,19 @@ function RsvpForm({ onSent }: { onSent: () => void }) {
     setBusy(true);
     setError(null);
     try {
-      const { error: insertError } = await supabase.from("rsvps").insert({
-        full_name: fullName,
-        status,
-        guest_count: status === "declined" ? 0 : 1,
+      const res = await send({
+        data: {
+          sheet: "RSVP" as const,
+          values: [
+            fullName,
+            status === "attending" ? "მოდის" : "ვერ მოდის",
+            status === "attending" ? withWhom.join(", ") : "",
+            status === "attending" ? guests : "0",
+            status === "attending" ? guestNames.trim() : "",
+          ],
+        },
       });
-      if (insertError) throw insertError;
+      if (!res.ok) throw new Error(res.reason);
       onSent();
     } catch {
       setError("ვერ გაიგზავნა, სცადეთ ხელახლა");
@@ -414,7 +433,67 @@ function RsvpForm({ onSent }: { onSent: () => void }) {
         </select>
       </div>
 
+      {status === "attending" && (
+        <>
+          <fieldset>
+            <legend className="font-geo text-xs tracking-[0.2em] text-ink/60">
+              ვისთან ერთად მოდიხართ? (შეგიძლიათ რამდენიმეს მონიშვნა)
+            </legend>
+            <div className="mt-2 grid gap-2 sm:grid-cols-2">
+              {COMPANIONS.map((option) => (
+                <label
+                  key={option}
+                  className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2.5 font-geo text-sm transition ${
+                    withWhom.includes(option)
+                      ? "border-wine bg-wine/10 text-ink"
+                      : "border-ink/15 bg-parchment text-ink/75"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={withWhom.includes(option)}
+                    onChange={() => toggle(option)}
+                    className="h-4 w-4 accent-[oklch(0.45_0.07_140)]"
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
+          </fieldset>
 
+          <div>
+            <label htmlFor="guests" className="font-geo text-xs tracking-[0.2em] text-ink/60">
+              სულ რამდენი სტუმარი (თქვენ ჩათვლით)
+            </label>
+            <select
+              id="guests"
+              value={guests}
+              onChange={(e) => setGuests(e.target.value)}
+              className="mt-1 w-full rounded-lg border border-ink/15 bg-parchment px-4 py-3 font-geo text-sm text-ink outline-none focus:border-wine"
+            >
+              {["1", "2", "3", "4", "5", "6"].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="guestNames" className="font-geo text-xs tracking-[0.2em] text-ink/60">
+              თანმხლები სტუმრების სახელები
+            </label>
+            <textarea
+              id="guestNames"
+              rows={2}
+              maxLength={300}
+              value={guestNames}
+              onChange={(e) => setGuestNames(e.target.value)}
+              className="mt-1 w-full rounded-lg border border-ink/15 bg-parchment px-4 py-3 font-geo text-sm text-ink outline-none focus:border-wine"
+            />
+          </div>
+        </>
+      )}
 
       {error && <p className="font-geo text-xs text-wine">{error}</p>}
 

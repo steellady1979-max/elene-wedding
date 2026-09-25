@@ -7,32 +7,32 @@ import { Schedule } from "@/components/Schedule";
 import { Guestbook } from "@/components/Guestbook";
 import MusicPlayer from "@/components/MusicPlayer";
 import { FloralCorner } from "@/components/FloralCorner";
-import { supabase } from "@/integrations/supabase/client";
-
-
+import { useServerFn } from "@tanstack/react-start";
+import { appendToSheet } from "@/lib/sheets.functions";
+import coupleAsset from "@/assets/couple-jaba-elene.jpg.asset.json";
 
 const panelImg = "/images/panel.webp";
 const bowImg = "/images/bow.webp";
 const archImg = "/images/arch.webp";
 const envelopeImg = "/images/envelope-olive.webp";
-const coupleImg = "/images/couple.webp";
+const coupleImg = coupleAsset.url;
 
-const WEDDING_DATE = new Date("2026-10-15T15:30:00+04:00");
+const WEDDING_DATE = new Date("2026-10-27T13:00:00+04:00");
 
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "ლაშა & მარიამი — ქორწილის მოწვევა" },
+      { title: "ჯაბა & ელენე — ქორწილის მოწვევა" },
       {
         name: "description",
         content:
-          "ლაშა და მარიამი გეპატიჟებიან 15 ოქტომბერს, 2026 — განრიგი, დრესკოდი, ლოკაცია და RSVP.",
+          "ჯაბა და ელენე გეპატიჟებიან 27 ოქტომბერს, 2026 — დღის განრიგი, ლოკაციები და დასტურის ფორმა.",
       },
-      { property: "og:title", content: "ლაშა & მარიამი — 15 ოქტომბერი, 2026" },
+      { property: "og:title", content: "ჯაბა & ელენე — 27 ოქტომბერი, 2026" },
       {
         property: "og:description",
-        content: "ინტერაქტიული ქორწილის მოწვევა — განრიგი, ლოკაცია და RSVP.",
+        content: "ინტერაქტიული ქორწილის მოწვევა — განრიგი, ლოკაცია და დასტური.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

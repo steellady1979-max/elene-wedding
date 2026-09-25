@@ -9,13 +9,11 @@ import MusicPlayer from "@/components/MusicPlayer";
 import { FloralCorner } from "@/components/FloralCorner";
 import { useServerFn } from "@tanstack/react-start";
 import { appendToSheet } from "@/lib/sheets.functions";
-import coupleAsset from "@/assets/couple-jaba-elene.jpg.asset.json";
-
 const panelImg = "/images/panel.webp";
 const bowImg = "/images/bow.webp";
 const archImg = "/images/arch.webp";
 const envelopeImg = "/images/envelope-olive.webp";
-const coupleImg = coupleAsset.url;
+const coupleImg = "/images/couple-jaba-elene.jpg";
 
 const WEDDING_DATE = new Date("2026-10-27T13:00:00+04:00");
 

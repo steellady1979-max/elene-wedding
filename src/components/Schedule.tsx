@@ -2,9 +2,9 @@ import { Reveal } from "./Reveal";
 
 import { SparkleTitle } from "./SparkleTitle";
 import { Camera, Church, MapPin, UtensilsCrossed } from "lucide-react";
-import writersHouse from "@/assets/writers-house.jpg.asset.json";
-import sioni from "@/assets/sioni.jpg.asset.json";
-import lisiMere from "@/assets/lisi-mere.jpg.asset.json";
+const writersHouse = { url: "/images/writers-house.jpg" };
+const sioni = { url: "/images/sioni.jpg" };
+const lisiMere = { url: "/images/lisi-mere.jpg" };
 
 const WRITERS_HOUSE_MAP =
   "https://www.google.com/maps/place/Writers'+House+of+Georgia/@41.6902356,44.7971553,650m/data=!3m2!1e3!4b1!4m6!3m5!1s0x40440cf20e8d460d:0xedb1bb704c7c475e!8m2!3d41.6902356!4d44.7997302!16s%2Fg%2F11c6z6r18f";

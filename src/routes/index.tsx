@@ -9,7 +9,7 @@ import MusicPlayer from "@/components/MusicPlayer";
 import { FloralCorner } from "@/components/FloralCorner";
 import { useServerFn } from "@tanstack/react-start";
 import { appendToSheet } from "@/lib/sheets.functions";
-import { CalendarPlus } from "lucide-react";
+import { CalendarPlus, Shirt } from "lucide-react";
 const panelImg = "/images/panel.webp";
 const bowImg = "/images/bow.webp";
 const archImg = "/images/arch.webp";
@@ -73,6 +73,7 @@ function Invitation() {
         <Hero />
         <EnvelopeSection />
         <Schedule />
+        <DressCode />
         <Guestbook />
         <CoupleImage />
         <Rsvp />
@@ -204,6 +205,28 @@ function Countdown() {
         </div>
       ))}
     </div>
+  );
+}
+
+function DressCode() {
+  return (
+    <section className="relative overflow-hidden bg-backdrop px-6 py-16 sm:py-20">
+      <FloralCorner className="-left-12 bottom-[-4rem] w-44 rotate-12 opacity-40 sm:w-56" />
+      <FloralCorner className="-right-12 top-[-4rem] w-44 -rotate-12 opacity-40 sm:w-56" flip />
+      <Reveal duration={1000}>
+        <div className="relative z-10 mx-auto max-w-xl rounded-2xl border border-parchment/20 bg-parchment/95 px-6 py-10 text-center shadow-soft sm:px-10 sm:py-12">
+          <span className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full border border-wine/20 bg-wine/10 text-wine">
+            <Shirt className="h-5 w-5" strokeWidth={1.5} aria-hidden="true" />
+          </span>
+          <SparkleTitle className="font-geo text-2xl">დრესკოდი</SparkleTitle>
+          <p className="mt-6 font-geo text-base tracking-[0.16em] text-ink">კლასიკური/ელეგანტური</p>
+          <span className="mx-auto my-5 block h-px w-16 bg-wine/25" aria-hidden="true" />
+          <p className="font-geo text-sm leading-relaxed text-ink/70">
+            თეთრი ფერი დავუთმოთ პატარძალს
+          </p>
+        </div>
+      </Reveal>
+    </section>
   );
 }
 

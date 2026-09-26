@@ -83,7 +83,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "ჯაბა & ელენე — ქორწილის მოწვევა" },
       { property: "og:description", content: "ჯაბა და ელენეს ქორწილი — 27 ოქტომბერი, 2026" },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://elene-wedding.vercel.app/" },
+      {
+        property: "og:url",
+        content: "https://elene-wedding.vercel.app/?share=elene-jaba-2026",
+      },
       { property: "og:locale", content: "ka_GE" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "ჯაბა & ელენე — ქორწილის მოწვევა" },
@@ -91,11 +94,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "ჯაბა & ელენე" },
       {
         property: "og:image",
-        content: "https://elene-wedding.vercel.app/images/couple-jaba-elene.jpg?v=20260926",
+        content: "https://elene-wedding.vercel.app/images/couple-jaba-elene.jpg?preview=3",
       },
       {
         property: "og:image:secure_url",
-        content: "https://elene-wedding.vercel.app/images/couple-jaba-elene.jpg?v=20260926",
+        content: "https://elene-wedding.vercel.app/images/couple-jaba-elene.jpg?preview=3",
       },
       { property: "og:image:type", content: "image/jpeg" },
       { property: "og:image:width", content: "1024" },
@@ -103,7 +106,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:image:alt", content: "ჯაბა და ელენე — საქორწილო მოსაწვევი" },
       {
         name: "twitter:image",
-        content: "https://elene-wedding.vercel.app/images/couple-jaba-elene.jpg?v=20260926",
+        content: "https://elene-wedding.vercel.app/images/couple-jaba-elene.jpg?preview=3",
       },
       { name: "twitter:image:alt", content: "ჯაბა და ელენე — საქორწილო მოსაწვევი" },
     ],
